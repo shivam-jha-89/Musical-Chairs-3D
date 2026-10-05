@@ -1,0 +1,3615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Musical Chairs 3D — Spin, Rush, Sit</title>
+    <!-- Primary SEO -->
+  <meta name="title" content="Musical Chairs 3D - Free Online Musical Chairs Game">
+  <meta name="description" content="Play Musical Chairs 3D online for free! Run, race, grab a chair before the music stops, unlock skins, climb the leaderboard, and become the champion. Mobile-friendly browser game.">
+  
+  <meta name="keywords" content="Musical Chairs 3D, musical chairs game, free online game, browser game, mobile game, HTML5 game, Three.js game, chair game, multiplayer style game">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Rakeshid03">
+  <link rel="canonical" href="https://rakeshid03.github.io/Musical-Chairs-3D/">
+  
+  <!-- Open Graph (Facebook, WhatsApp, Discord) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Musical Chairs 3D - Free Online Game">
+  <meta property="og:description" content="Race around the chairs, wait for the music to stop, and grab your seat before everyone else!">
+  <meta property="og:url" content="https://rakeshid03.github.io/Musical-Chairs-3D/">
+  <meta property="og:image" content="musicalchair3dimg.png">
+  <meta property="og:site_name" content="Musical Chairs 3D">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Musical Chairs 3D">
+  <meta name="twitter:description" content="Play the classic Musical Chairs game in 3D directly in your browser.">
+  <meta name="twitter:image" content="musicalchair3dimg.png">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoGame",
+      "name": "Musical Chairs 3D",
+      "description": "Free browser-based 3D Musical Chairs game playable on mobile and desktop.",
+      "applicationCategory": "Game",
+      "operatingSystem": "Web",
+      "genre": "Arcade",
+      "url": "https://rakeshid03.github.io/Musical-Chairs-3D/",
+      "image": "musicalchair3dimg.png",
+      "author": {
+        "@type": "Person",
+        "name": "Rakeshid03"
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #1a0e2e;
+      --orange: #ff8c42;
+      --orange-hot: #ff6b1a;
+      --yellow: #ffd23f;
+      --pink: #ff4b6e;
+      --teal: #00f5d4;
+      --purple: #9b5de5;
+      --cream: #fff4e6;
+      --shadow: rgba(0, 0, 0, 0.4);
+      --glass: rgba(20, 10, 35, 0.75);
+      --glass-light: rgba(255, 244, 230, 0.08);
+      --border: rgba(255, 140, 66, 0.25);
+      --border-light: rgba(255, 244, 230, 0.12);
+      --gold: #FFD700;
+      --gold-dark: #DAA520;
+      --glass-green: rgba(15, 50, 35, 0.88);
+      --glass-green-light: rgba(25, 70, 50, 0.92);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-deep);
+      color: var(--cream);
+      touch-action: none;
+    }
+    
+    #gameContainer {
+      position: fixed;
+      inset: 0;
+    }
+    
+    canvas {
+      display: block;
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    /* ============== MENU UI ============== */
+    #menuUI {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-out 0.3s forwards;
+    }
+    
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+    
+    .menu-top {
+      padding: 16px 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    
+    .menu-top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .coin-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--glass-green);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 5px 12px 5px 8px;
+      pointer-events: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    
+    .coin-icon {
+      width: 24px;
+      height: 24px;
+      background: radial-gradient(circle at 30% 30%, #FFEB3B, #FF9800);
+      border-radius: 50%;
+      border: 2px solid #FFE082;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #E65100;
+      font-family: 'Fredoka', sans-serif;
+    }
+    
+    .coin-amount {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+    }
+    
+    .plus-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      border: 2px solid #81C784;
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: transform 0.1s;
+      margin-left: 4px;
+      pointer-events: auto;
+    }
+    
+    .plus-btn:active {
+      transform: scale(0.85);
+    }
+    
+    .icon-btn-round {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--glass-green);
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      pointer-events: auto;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      transition: transform 0.1s;
+    }
+    
+    .icon-btn-round:active {
+      transform: scale(0.88);
+    }
+    
+    .icon-btn-round .material-icons {
+      font-size: 22px;
+    }
+    
+    
+    .logo-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .game-logo {
+      display: block;
+      width: min(90vw, 520px);
+      height: auto;
+      object-fit: contain;
+      user-select: none;
+      pointer-events: none;
+    }
+    
+    @media (max-width: 768px) {
+      .game-logo {
+        width: min(88vw, 420px);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .game-logo {
+        width: 92vw;
+        max-width: 300px;
+      }
+    }
+    
+    @media (max-width: 360px) {
+      .game-logo {
+        width: 95vw;
+        max-width: 320px;
+      }
+    }
+    
+    .subtitle {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 5px;
+      color: #fff;
+      text-shadow: 2px 2px 0 #4A148C, 3px 3px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .menu-bottom {
+      padding: 0 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 26px;
+    }
+    
+    .start-btn {
+      pointer-events: auto;
+      width: 100%;
+      max-width: 300px;
+      height: 62px;
+      border: none;
+      border-radius: 31px;
+      background: linear-gradient(to bottom, #FFE066 0%, #FFD23F 40%, #FFA500 100%);
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 0 #E67E22, 0 10px 20px rgba(0, 0, 0, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+      transition: transform 0.1s, box-shadow 0.1s;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .start-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #E67E22, 0 5px 10px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+      animation: none;
+    }
+    
+    @keyframes pulse {
+      
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      
+      50% {
+        transform: scale(1.03);
+      }
+    }
+    
+    .play-icon {
+      width: 0;
+      height: 0;
+      border-left: 16px solid #fff;
+      border-top: 11px solid transparent;
+      border-bottom: 11px solid transparent;
+      filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.2));
+    }
+    
+    .bottom-nav {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      pointer-events: auto;
+    }
+    
+    .nav-btn {
+      background: var(--glass-green);
+      border: 2px solid var(--gold);
+      border-radius: 14px;
+      padding: 8px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 215, 0, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+      transition: transform 0.1s, background 0.2s;
+    }
+    
+    .nav-btn:active {
+      transform: scale(0.92);
+      background: var(--glass-green-light);
+    }
+    
+    .nav-icon {
+      font-size: 24px;
+      color: var(--gold);
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+    }
+    
+    .nav-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+      letter-spacing: 0.3px;
+    }
+    
+    /* ============== GAME HUD ============== */
+    #hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    .hud-top {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      pointer-events: auto;
+      flex-wrap: wrap;
+    }
+    
+    .stats-panel {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      max-width: 150px;
+      transform: scale(0.85);
+      transform-origin: top left;
+    }
+    
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .stat-icon {
+      font-size: 16px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+    }
+    
+    .stat-label {
+      color: rgba(255, 244, 230, 0.65);
+      flex: 1;
+    }
+    
+    .stat-value {
+      color: var(--cream);
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+    }
+    
+    .music-status {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.85);
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-light);
+      border-radius: 18px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      pointer-events: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .music-status.playing {
+      border-color: rgba(0, 245, 212, 0.4);
+    }
+    
+    .music-status.stopped {
+      border-color: rgba(255, 75, 110, 0.3);
+    }
+    
+    .music-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 8px var(--teal);
+    }
+    
+    .music-status.playing .music-dot {
+      animation: pulse2 0.5s ease-in-out infinite alternate;
+    }
+    
+    .music-status.stopped .music-dot {
+      background: var(--pink);
+      box-shadow: 0 0 8px var(--pink);
+    }
+    
+    @keyframes pulse2 {
+      from {
+        transform: scale(1);
+        opacity: 1;
+      }
+      
+      to {
+        transform: scale(1.5);
+        opacity: 0.6;
+      }
+    }
+    
+    .music-text {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cream);
+      white-space: nowrap;
+    }
+    
+    .hud-controls {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .hud-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      color: var(--cream);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      pointer-events: auto;
+    }
+    
+    .hud-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .hud-btn .material-icons {
+      font-size: 22px;
+    }
+    
+    #sitButton {
+      position: fixed;
+      bottom: 36px;
+      right: 28px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #FFE066, #FF6B1A);
+      border: 4px solid var(--cream);
+      color: white;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 60;
+      box-shadow: 0 8px 28px rgba(255, 107, 26, 0.5), inset 0 -6px 18px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      transition: opacity 0.3s, transform 0.2s, filter 0.3s;
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    #sitButton.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    #sitButton.active {
+      animation: sitPulse 1s ease-in-out infinite;
+    }
+    
+    @keyframes sitPulse {
+      
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      
+      50% {
+        transform: scale(1.06);
+      }
+    }
+    
+    #sitButton.disabled {
+      opacity: 0.35;
+      filter: grayscale(0.7);
+      pointer-events: none;
+      animation: none;
+      visibility: visible;
+    }
+    
+    #joystick {
+      position: fixed;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: rgba(15, 50, 35, 0.5);
+      border: 2px solid rgba(255, 215, 0, 0.2);
+      backdrop-filter: blur(8px);
+      z-index: 60;
+      touch-action: none;
+      display: none;
+      pointer-events: none;
+    }
+    
+    #joystickKnob {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--orange-hot));
+      border: 2px solid var(--cream);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+      pointer-events: none;
+    }
+    
+    #countdownOverlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 80;
+      pointer-events: none;
+    }
+    
+    .countdown-num {
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(120px, 25vw, 220px);
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFD23F, #FF8C42);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 8px 40px rgba(255, 140, 66, 0.6));
+      animation: countdownPop 1s ease-out;
+    }
+    
+    @keyframes countdownPop {
+      0% {
+        transform: scale(0.3);
+        opacity: 0;
+      }
+      
+      30% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+      
+      80% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      
+      100% {
+        transform: scale(1.3);
+        opacity: 0;
+      }
+    }
+    
+    .round-banner {
+      position: absolute;
+      top: 28%;
+      text-align: center;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 24px;
+      color: var(--cream);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    
+    .round-banner span {
+      color: #FFD23F;
+      font-size: 32px;
+      display: block;
+      margin-top: 4px;
+    }
+    
+    /* ============== MODALS ============== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    
+    .modal-overlay.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background: linear-gradient(135deg, #1a4a35, #0d2e20);
+      border: 2px solid var(--gold);
+      border-radius: 24px;
+      padding: 24px;
+      width: 90%;
+      max-width: 360px;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    
+    .modal-overlay.visible .modal-content {
+      transform: scale(1);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    
+    .modal-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    
+    .modal-close:hover {
+      background: rgba(255, 75, 110, 0.3);
+    }
+    
+    .modal-close .material-icons {
+      font-size: 20px;
+    }
+    
+    .settings-section {
+      margin-bottom: 16px;
+    }
+    
+    .settings-section-title {
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 215, 0, 0.6);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .option-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    
+    .option-btn {
+      padding: 10px 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-height: 48px;
+      justify-content: center;
+    }
+    
+    .option-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .option-btn.active {
+      background: linear-gradient(135deg, var(--orange), var(--orange-hot));
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 4px 14px rgba(255, 107, 26, 0.4);
+    }
+    
+    .option-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+    
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 12px;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      background: linear-gradient(to right, var(--orange) 0%, var(--orange) 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 100%);
+    }
+    
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--orange-hot));
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255, 107, 26, 0.5);
+      border: 2px solid var(--cream);
+    }
+    
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--orange);
+      cursor: pointer;
+      border: 2px solid var(--cream);
+    }
+    
+    .slider-value {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--orange);
+      min-width: 40px;
+      text-align: right;
+    }
+    
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .toggle-row:last-child {
+      border-bottom: none;
+    }
+    
+    .toggle-label {
+      font-size: 14px;
+      color: #fff;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .toggle-label .material-icons {
+      font-size: 20px;
+      color: var(--gold);
+    }
+    
+    .toggle {
+      width: 44px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .toggle.on {
+      background: var(--orange);
+    }
+    
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: left 0.2s;
+    }
+    
+    .toggle.on::after {
+      left: 23px;
+    }
+    
+    .profile-preview {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+    }
+    
+    .field-group {
+      margin-bottom: 16px;
+    }
+    
+    .field-label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: rgba(255, 215, 0, 0.7);
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .name-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 215, 0, 0.3);
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      outline: none;
+    }
+    
+    .name-input:focus {
+      border-color: var(--gold);
+    }
+    
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    
+    .color-swatch {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    
+    .color-swatch.active {
+      border-color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    
+    .save-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--orange), var(--orange-hot));
+      color: white;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(255, 107, 26, 0.4);
+      transition: transform 0.1s;
+      margin-top: 8px;
+    }
+    
+    .save-btn:active {
+      transform: scale(0.97);
+    }
+    
+    .demo-popup {
+      text-align: center;
+    }
+    
+    .demo-icon-large {
+      font-size: 64px;
+      margin: 10px 0 16px;
+    }
+    
+    .demo-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    
+    .demo-reward {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .demo-reward-icon {
+      font-size: 32px;
+    }
+    
+    .demo-reward-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      font-family: 'Fredoka', sans-serif;
+    }
+    
+    .leaderboard-list {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .leaderboard-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .leaderboard-rank {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      min-width: 30px;
+    }
+    
+    .leaderboard-name {
+      flex: 1;
+      font-size: 14px;
+      color: #fff;
+      font-weight: 600;
+    }
+    
+    .leaderboard-score {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 14px;
+      color: var(--gold);
+    }
+    
+    .shop-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .shop-item-icon {
+      font-size: 32px;
+    }
+    
+    .shop-item-info {
+      flex: 1;
+      text-align: left;
+    }
+    
+    .shop-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    
+    .shop-item-desc {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .shop-item-price {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 215, 0, 0.15);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      color: var(--gold);
+      font-size: 14px;
+    }
+    
+    #toast {
+      position: fixed;
+      bottom: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    
+    #roundTransition {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 90;
+      pointer-events: none;
+      background: rgba(20, 10, 35, 0.5);
+      backdrop-filter: blur(4px);
+    }
+    
+    .transition-content {
+      text-align: center;
+      animation: transFade 0.5s ease-out;
+    }
+    
+    @keyframes transFade {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .transition-round {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 22px;
+      color: rgba(255, 244, 230, 0.6);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    
+    .transition-eliminated {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 36px;
+      color: var(--pink);
+      margin: 8px 0;
+    }
+    
+    .transition-info {
+      font-size: 16px;
+      color: rgba(255, 244, 230, 0.7);
+    }
+    
+    @media (max-height: 700px) {
+      .logo-text {
+        font-size: 38px;
+      }
+      
+      .logo-3d {
+        font-size: 19px;
+      }
+      
+      .start-btn {
+        height: 56px;
+        font-size: 23px;
+        max-width: 280px;
+      }
+      
+      .menu-top {
+        padding-top: 12px;
+      }
+      
+      .menu-bottom {
+        padding-bottom: 16px;
+        gap: 12px;
+      }
+      
+      .subtitle {
+        font-size: 12px;
+        margin-top: 6px;
+      }
+      
+      .logo-decor {
+        width: 180px;
+        height: 60px;
+      }
+      
+      .chair-3d-icon {
+        width: 44px;
+        height: 44px;
+      }
+    }
+    
+    @media (max-height: 600px) {
+      .logo-text {
+        font-size: 32px;
+      }
+      
+      .logo-3d {
+        font-size: 16px;
+      }
+      
+      .start-btn {
+        height: 50px;
+        font-size: 20px;
+        max-width: 260px;
+      }
+      
+      .nav-btn {
+        padding: 6px 4px;
+      }
+      
+      .nav-icon {
+        font-size: 20px;
+      }
+      
+      .nav-label {
+        font-size: 9px;
+      }
+      
+      .logo-decor {
+        width: 160px;
+        height: 50px;
+        margin-bottom: -4px;
+      }
+      
+      .chair-3d-icon {
+        width: 38px;
+        height: 38px;
+      }
+      
+      .note {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="gameContainer"></div>
+  
+  <div id="menuUI">
+    <div class="menu-top">
+      <div class="menu-top-bar">
+        <div style="display: flex; align-items: center;">
+          <div class="coin-display">
+            <div class="coin-icon">$</div><span class="coin-amount" id="coinAmount">0</span>
+          </div>
+          <div class="plus-btn" onclick="game.openModal('shopModal')">+</div>
+        </div>
+        <div class="icon-btn-round" onclick="game.openModal('settingsModal')"><span class="material-icons">settings</span></div>
+      </div>
+      
+      <div class="logo-container">
+        <img src="musicalchair3dimg.png" alt="Musical Chairs 3D" class="game-logo">
+        <div class="subtitle">SPIN • RUSH • SIT</div>
+      </div>
+      
+    </div>
+    <div class="menu-bottom">
+      <button class="start-btn" onclick="game.startGame()">
+        <div class="play-icon"></div>START GAME
+      </button>
+      <div class="bottom-nav">
+        <div class="nav-btn" onclick="game.openModal('dailyModal')"><span class="material-icons nav-icon">card_giftcard</span>
+          <div class="nav-label">DAILY</div>
+        </div>
+        <div class="nav-btn" onclick="game.openModal('leaderboardModal')"><span class="material-icons nav-icon">emoji_events</span>
+          <div class="nav-label">RANKING</div>
+        </div>
+        <div class="nav-btn" onclick="game.openModal('shopModal')"><span class="material-icons nav-icon">shopping_cart</span>
+          <div class="nav-label">SHOP</div>
+        </div>
+        <div class="nav-btn" onclick="game.openProfile()"><span class="material-icons nav-icon">person</span>
+          <div class="nav-label">PROFILE</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="hud" class="hidden">
+    <div class="hud-top">
+      <div class="stats-panel">
+        <div class="stat-row"><span class="stat-icon"><span class="material-icons">emoji_events</span></span><span class="stat-label">Round</span><span class="stat-value" id="hudRound">1/5</span></div>
+        <div class="stat-row"><span class="stat-icon"><span class="material-icons">groups</span></span><span class="stat-label">Players</span><span class="stat-value" id="hudPlayers">10</span></div>
+        <div class="stat-row"><span class="stat-icon"><span class="material-icons">event_seat</span></span><span class="stat-label">Chairs</span><span class="stat-value" id="hudChairs">8</span></div>
+      </div>
+      <div class="music-status stopped" id="musicStatus">
+        <div class="music-dot" id="musicDot"></div><span class="music-text" id="musicLabel">Waiting</span>
+      </div>
+      <div class="hud-controls">
+        <button class="hud-btn" onclick="game.pauseGame()"><span class="material-icons">pause</span></button>
+        <button class="hud-btn" onclick="game.openModal('settingsModal')"><span class="material-icons">settings</span></button>
+      </div>
+    </div>
+  </div>
+  
+  <button id="sitButton">SIT</button>
+  <div id="joystick">
+    <div id="joystickKnob"></div>
+  </div>
+  
+  <div id="countdownOverlay" class="hidden">
+    <div class="round-banner" id="roundBanner">Round<span id="roundBannerNum">1</span></div>
+    <div class="countdown-num" id="countdownNum">3</div>
+  </div>
+  
+  <div id="roundTransition" class="hidden">
+    <div class="transition-content">
+      <div class="transition-round" id="transRound">Round 2</div>
+      <div class="transition-eliminated" id="transEliminated">2 Eliminated</div>
+      <div class="transition-info" id="transInfo">8 players · 6 chairs</div>
+    </div>
+  </div>
+  
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Settings</div><button class="modal-close" onclick="game.closeModal('settingsModal')"><span class="material-icons">close</span></button>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Camera Angle</div>
+        <div class="option-row">
+          <button class="option-btn active" data-camera="follow" onclick="game.setCamera('follow', this)"><span class="material-icons option-icon">person</span>Third Person</button>
+          <button class="option-btn" data-camera="top" onclick="game.setCamera('top', this)"><span class="material-icons option-icon">photo_camera</span>Top View</button>
+          <button class="option-btn" data-camera="side" onclick="game.setCamera('side', this)"><span class="material-icons option-icon">videocam</span>Side View</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Game Quality</div>
+        <div class="option-row">
+          <button class="option-btn" data-quality="low" onclick="game.setQuality('low', this)"><span class="material-icons option-icon">eco</span>Low</button>
+          <button class="option-btn active" data-quality="medium" onclick="game.setQuality('medium', this)"><span class="material-icons option-icon">network_cell</span>Medium</button>
+          <button class="option-btn" data-quality="high" onclick="game.setQuality('high', this)"><span class="material-icons option-icon">hd</span>High</button>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Joystick Sensitivity</div>
+        <div class="slider-container"><input type="range" id="sensitivitySlider" min="0" max="100" step="5" value="50" class="slider" oninput="game.updateSensitivity(this.value)"><span class="slider-value" id="sensitivityValue">50%</span></div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Audio</div>
+        <div class="toggle-row"><span class="toggle-label"><span class="material-icons">music_note</span>Music</span>
+          <div class="toggle on" id="musicToggle" onclick="game.toggleSetting('musicToggle', 'music')"></div>
+        </div>
+        <div class="toggle-row"><span class="toggle-label"><span class="material-icons">volume_up</span>Sound Effects</span>
+          <div class="toggle on" id="sfxToggle" onclick="game.toggleSetting('sfxToggle', 'sfx')"></div>
+        </div>
+      </div>
+      <button class="save-btn" onclick="game.closeModal('settingsModal')">DONE</button>
+    </div>
+  </div>
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Profile</div><button class="modal-close" onclick="game.closeModal('profileModal')"><span class="material-icons">close</span></button>
+      </div>
+      <div class="profile-preview"><canvas id="preview-canvas" width="80" height="80"></canvas></div>
+      <div class="field-group">
+        <label class="field-label">Player Name (Max 10)</label>
+        <input type="text" class="name-input" id="nameInput" value="Player" maxlength="10" oninput="game.updatePreview()">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Skin Color</label>
+        <div class="color-grid" id="skinGrid"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Shirt Color</label>
+        <div class="color-grid" id="colorGrid"></div>
+      </div>
+      <button class="save-btn" onclick="game.saveProfile()">SAVE</button>
+    </div>
+  </div>
+  
+  <!-- 2. DAILY REWARD POPUP (Updated) -->
+  <div class="modal-overlay" id="dailyModal">
+    <div class="modal-content demo-popup">
+      <div class="modal-header">
+        <div class="modal-title">Daily Reward</div><button class="modal-close" onclick="game.closeModal('dailyModal')"><span class="material-icons">close</span></button>
+      </div>
+      <div class="demo-icon-large">🎁</div>
+      <div class="demo-text">Come back every day to claim your rewards!</div>
+      <div class="demo-reward"><span class="demo-reward-icon">🪙</span><span class="demo-reward-text">+100 Coins</span></div>
+      <button class="save-btn" id="dailyClaimBtn" onclick="game.claimDaily()">CLAIM</button>
+    </div>
+  </div>
+  
+  <!-- 1. REAL LEADERBOARD POPUP (Updated) -->
+  <div class="modal-overlay" id="leaderboardModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Leaderboard</div><button class="modal-close" onclick="game.closeModal('leaderboardModal')"><span class="material-icons">close</span></button>
+      </div>
+      <div class="demo-icon-large" style="font-size: 48px;">🏆</div>
+      <ul class="leaderboard-list" id="leaderboardList">
+        <!-- Populated by JS -->
+      </ul>
+    </div>
+  </div>
+  
+  <!-- 4. SHOP POPUP (Updated) -->
+  <div class="modal-overlay" id="shopModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Shop</div><button class="modal-close" onclick="game.closeModal('shopModal')"><span class="material-icons">close</span></button>
+      </div>
+      <div class="demo-icon-large" style="font-size: 48px;">🛒</div>
+      <div class="shop-item">
+        <span class="shop-item-icon">🪙</span>
+        <div class="shop-item-info">
+          <div class="shop-item-name">Coins Pack</div>
+          <div class="shop-item-desc">Get $500 coins</div>
+        </div>
+        <div class="shop-item-price">$1</div>
+      </div>
+      <div class="shop-item">
+        <span class="shop-item-icon">🚫</span>
+        <div class="shop-item-info">
+          <div class="shop-item-name">Remove Ads</div>
+          <div class="shop-item-desc">Enjoy ad-free gameplay</div>
+        </div>
+        <div class="shop-item-price">$2</div>
+      </div>
+      <div class="shop-item">
+        <span class="shop-item-icon">🎨</span>
+        <div class="shop-item-info">
+          <div class="shop-item-name">Premium Skin</div>
+          <div class="shop-item-desc">Unlock exclusive colors</div>
+        </div>
+        <div class="shop-item-price">$2.50</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-overlay" id="pauseModal">
+    <div class="modal-content" style="text-align: center;">
+      <div class="modal-title" style="margin-bottom: 20px;">Paused</div>
+      <button class="save-btn" onclick="game.resumeGame()" style="margin-bottom: 10px;">RESUME</button>
+      <button class="save-btn" onclick="game.quitToMenu()" style="background: rgba(255,255,255,0.1); box-shadow: 0 2px .8px rgba(0, 0, 0, 0.4);">QUIT TO MENU</button>
+    </div>
+  </div>
+  
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-content" style="text-align: center;">
+      <div class="modal-title" style="margin-bottom: 16px; font-size: 32px; color: var(--pink);">Eliminated</div>
+      <div id="gameOverMsg" style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 16px;">You didn't make it to a chair!</div>
+      <button class="save-btn" onclick="game.quitToMenu()">BACK TO MENU</button>
+    </div>
+  </div>
+  
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal-content" style="text-align: center;">
+      <div class="modal-title" style="margin-bottom: 16px; font-size: 32px; background: linear-gradient(135deg, var(--yellow), var(--orange)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Champion!</div>
+      <div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 16px;" id="victoryMsg">You grabbed the final chair!</div>
+      <button class="save-btn" onclick="game.quitToMenu()">BACK TO MENU</button>
+    </div>
+  </div>
+  
+  <div id="toast"></div>
+  
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+  
+  <script type="module">
+    import * as THREE from 'three';
+    
+    const CONFIG = {
+      arena: {
+        groundRadius: 38,
+        pathRadius: 20,
+        pathWidth: 4.0,
+        trackInnerRadius: 18,
+        trackOuterRadius: 22,
+        maxChairCircleRadius: 5.5,
+        minChairCircleRadius: 0,
+      },
+      player: {
+        walkSpeed: 5.0,
+        runSpeed: 9.5,
+        sitRange: 2.6,
+        rotationSpeed: 0.32,
+        minSeparation: 1.1,
+        sitTransitionDuration: 0.4,
+        maxNameLength: 10,
+      },
+      camera: {
+        followDistance: 7,
+        followHeight: 4,
+        minPitch: 0.15,
+        maxPitch: 1.35,
+        topDefaultHeight: 24,
+        sideDefaultDist: 18,
+      },
+      game: {
+        rounds: [
+          { players: 10, chairs: 8 }, { players: 8, chairs: 6 },
+          { players: 6, chairs: 4 }, { players: 4, chairs: 2 },
+          { players: 2, chairs: 1 },
+        ],
+      },
+    };
+    
+    const PLAYER_COLORS = [
+      { body: 0xFF4B6E, hair: 0x2A1810, name: 'Pink' },
+      { body: 0x4CAF50, hair: 0x1A1A1A, name: 'Green' },
+      { body: 0xFFD23F, hair: 0x4A2C1A, name: 'Yellow' },
+      { body: 0x4D96FF, hair: 0x2A1810, name: 'Blue' },
+      { body: 0x9B5DE5, hair: 0x1A1A1A, name: 'Purple' },
+      { body: 0xFF8C42, hair: 0x3D2817, name: 'Orange' },
+      { body: 0x00BBF9, hair: 0x2A1810, name: 'Cyan' },
+      { body: 0xF15BB5, hair: 0x3D2817, name: 'Magenta' },
+      { body: 0x6BCB77, hair: 0x4A2C1A, name: 'Lime' },
+      { body: 0xFEE440, hair: 0x1A1A1A, name: 'Gold' },
+    ];
+    
+    const SKIN_COLORS = [
+      0xFFDBB0, 0xF5C8A0, 0xE8B890, 0xD4A76A, 0xB07850, 0x8D5524, 0x5C3317, 0x3B2417
+    ];
+    
+    class AudioManager {
+      constructor() {
+        this.ctx = null;
+        this.masterGain = null;
+        this.musicGain = null;
+        this.sfxGain = null;
+        this.musicPlaying = false;
+        this.musicScheduler = null;
+        this.nextNoteTime = 0;
+        this.currentStep = 0;
+        this.melodyScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+        this.melodyPattern = [4, 2, 5, 4, 6, 5, 4, 2, 5, 7, 6, 4, 5, 4, 2, 0];
+        this.bassPattern = [0, 0, 4, 0, 2, 2, 5, 4];
+      }
+      init() {
+        if (this.ctx) return;
+        this.ctx = new(window.AudioContext || window.webkitAudioContext)();
+        this.masterGain = this.ctx.createGain();
+        this.masterGain.gain.value = 0.45;
+        this.masterGain.connect(this.ctx.destination);
+        this.musicGain = this.ctx.createGain();
+        this.musicGain.gain.value = 0.55;
+        this.musicGain.connect(this.masterGain);
+        this.sfxGain = this.ctx.createGain();
+        this.sfxGain.gain.value = 0.85;
+        this.sfxGain.connect(this.masterGain);
+      }
+      resume() { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); }
+      playTone(freq, duration, time, type = 'sine', volume = 0.3, target = null) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, time);
+        gain.gain.linearRampToValueAtTime(volume, time + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+        osc.connect(gain);
+        gain.connect(target || this.musicGain);
+        osc.start(time);
+        osc.stop(time + duration + 0.05);
+      }
+      startMusic() {
+        if (!this.ctx || this.musicPlaying) return;
+        this.musicPlaying = true;
+        this.nextNoteTime = this.ctx.currentTime + 0.1;
+        this.currentStep = 0;
+        this.scheduleMusic();
+      }
+      scheduleMusic() {
+        if (!this.musicPlaying) return;
+        while (this.nextNoteTime < this.ctx.currentTime + 0.3) {
+          const step = this.currentStep;
+          const noteIdx = this.melodyPattern[step % this.melodyPattern.length];
+          this.playTone(this.melodyScale[noteIdx], 0.25, this.nextNoteTime, 'square', 0.12);
+          if (step % 2 === 0) {
+            const h = Math.min(noteIdx + 2, this.melodyScale.length - 1);
+            this.playTone(this.melodyScale[h], 0.3, this.nextNoteTime, 'triangle', 0.08);
+          }
+          if (step % 4 === 0) {
+            const b = this.bassPattern[(step / 4) % this.bassPattern.length];
+            this.playTone(this.melodyScale[b] / 2, 0.4, this.nextNoteTime, 'triangle', 0.2);
+          }
+          if (step % 2 === 1) this.playNoise(0.05, this.nextNoteTime, 0.06, 6000);
+          this.nextNoteTime += 0.16;
+          this.currentStep++;
+        }
+        this.musicScheduler = setTimeout(() => this.scheduleMusic(), 60);
+      }
+      playNoise(duration, time, volume, filterFreq = 2000) {
+        const bs = Math.floor(this.ctx.sampleRate * duration);
+        const buf = this.ctx.createBuffer(1, bs, this.ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < bs; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / bs);
+        const src = this.ctx.createBufferSource();
+        src.buffer = buf;
+        const filt = this.ctx.createBiquadFilter();
+        filt.type = 'highpass';
+        filt.frequency.value = filterFreq;
+        const g = this.ctx.createGain();
+        g.gain.value = volume;
+        src.connect(filt);
+        filt.connect(g);
+        g.connect(this.sfxGain);
+        src.start(time);
+      }
+      stopMusic() {
+        this.musicPlaying = false;
+        if (this.musicScheduler) {
+          clearTimeout(this.musicScheduler);
+          this.musicScheduler = null;
+        }
+        if (this.musicGain) {
+          const now = this.ctx.currentTime;
+          this.musicGain.gain.cancelScheduledValues(now);
+          this.musicGain.gain.setValueAtTime(this.musicGain.gain.value, now);
+          this.musicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+          setTimeout(() => { if (this.musicGain) this.musicGain.gain.value = 0.55; }, 300);
+        }
+      }
+      playSit() {
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        this.playTone(180, 0.12, t, 'sine', 0.4, this.sfxGain);
+        this.playTone(120, 0.18, t + 0.02, 'sine', 0.3, this.sfxGain);
+        this.playNoise(0.08, t, 0.15, 800);
+      }
+      playElimination() {
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        for (let i = 0; i < 5; i++) this.playTone(500 - i * 70, 0.18, t + i * 0.08, 'sawtooth', 0.2, this.sfxGain);
+        this.playNoise(0.3, t, 0.1, 200);
+      }
+      playCountdown(isGo = false) {
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const f = isGo ? 880 : 440;
+        this.playTone(f, 0.25, t, 'sine', 0.45, this.sfxGain);
+        this.playTone(f * 1.5, 0.15, t, 'sine', 0.2, this.sfxGain);
+      }
+      playVictory() {
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        const n = [523.25, 659.25, 783.99, 1046.50];
+        n.forEach((f, i) => this.playTone(f, 0.4, t + i * 0.12, 'triangle', 0.3, this.sfxGain));
+        n.forEach(f => this.playTone(f, 1.5, t + 0.5, 'sine', 0.15, this.sfxGain));
+        for (let i = 0; i < 8; i++) this.playTone(1500 + Math.random() * 500, 0.1, t + 1 + i * 0.08, 'sine', 0.1, this.sfxGain);
+      }
+      playGameOver() {
+        if (!this.ctx) return;
+        const t = this.ctx.currentTime;
+        this.playTone(330, 0.4, t, 'triangle', 0.3, this.sfxGain);
+        this.playTone(294, 0.4, t + 0.3, 'triangle', 0.3, this.sfxGain);
+        this.playTone(247, 0.7, t + 0.6, 'triangle', 0.3, this.sfxGain);
+      }
+      playFootstep() {
+        if (!this.ctx) return;
+        this.playNoise(0.04, this.ctx.currentTime, 0.08, 400);
+      }
+      playWhoosh() {
+        if (!this.ctx) return;
+        this.playNoise(0.2, this.ctx.currentTime, 0.12, 1200);
+      }
+    }
+    
+    class Character {
+      constructor(colorScheme, skinColor, name, isHuman = false) {
+        this.colorScheme = { ...colorScheme, skin: skinColor };
+        this.name = name.substring(0, CONFIG.player.maxNameLength);
+        this.isHuman = isHuman;
+        this.state = 'idle';
+        this.stateTime = 0;
+        this.animTime = 0;
+        this.eliminated = false;
+        this.sitting = false;
+        this.sitOnChair = null;
+        this.targetChair = null;
+        this.rushDelay = 0;
+        this.speedOffset = (Math.random() - 0.5) * 0.1;
+        // AI personality (AI names stay the same)
+        if (!this.isHuman) {
+          const types = [
+          {
+            type: "Beginner",
+            speed: 0.90,
+            reaction: 0.55,
+            accuracy: 0.70
+          },
+          {
+            type: "Normal",
+            speed: 1.00,
+            reaction: 0.35,
+            accuracy: 0.82
+          },
+          {
+            type: "Fast",
+            speed: 1.10,
+            reaction: 0.20,
+            accuracy: 0.92
+          },
+          {
+            type: "Aggressive",
+            speed: 1.18,
+            reaction: 0.18,
+            accuracy: 0.86
+          },
+          {
+            type: "Pro",
+            speed: 1.20,
+            reaction: 0.10,
+            accuracy: 0.98
+          }];
+          
+          this.ai = types[Math.floor(Math.random() * types.length)];
+        } else {
+          this.ai = {
+            type: "Player",
+            speed: 1,
+            reaction: 0,
+            accuracy: 1
+          };
+        }
+        this.lastFootstepTime = 0;
+        this.removed = false;
+        this.sitTransition = { active: false, startPos: new THREE.Vector3(), targetPos: new THREE.Vector3(), startRotY: 0, targetRotY: 0, progress: 0, duration: CONFIG.player.sitTransitionDuration };
+        this.prevRotY = 0;
+        this.turnVelocity = 0;
+        this.mesh = this.createMesh();
+      }
+      
+      createMesh() {
+        const group = new THREE.Group();
+        const c = this.colorScheme;
+        const skinMat = new THREE.MeshStandardMaterial({ color: c.skin, roughness: 0.45 });
+        const bodyMat = new THREE.MeshStandardMaterial({ color: c.body, roughness: 0.55, metalness: 0.05 });
+        const darkMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.3 });
+        const hairMat = new THREE.MeshStandardMaterial({ color: c.hair, roughness: 0.75, metalness: 0.1 });
+        const cheekMat = new THREE.MeshStandardMaterial({ color: 0xff9999, roughness: 0.6, transparent: true, opacity: 0.3 });
+        
+        const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.35, 0.2, 8, 16), bodyMat);
+        torso.position.y = 0.8;
+        torso.castShadow = true;
+        group.add(torso);
+        
+        const collar = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12, 0, Math.PI * 2, 0, Math.PI * 0.4), skinMat);
+        collar.position.set(0, 0.98, 0);
+        collar.scale.set(1, 0.3, 1);
+        group.add(collar);
+        
+        const headGroup = new THREE.Group();
+        headGroup.position.y = 1.2;
+        group.add(headGroup);
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 24, 24), skinMat);
+        head.position.y = 0.35;
+        head.castShadow = true;
+        headGroup.add(head);
+        
+        const cheekGeo = new THREE.SphereGeometry(0.08, 8, 8);
+        const leftCheek = new THREE.Mesh(cheekGeo, skinMat);
+        leftCheek.position.set(-0.18, 0.28, 0.28);
+        headGroup.add(leftCheek);
+        const rightCheek = new THREE.Mesh(cheekGeo, skinMat);
+        rightCheek.position.set(0.18, 0.28, 0.28);
+        headGroup.add(rightCheek);
+        
+        const blushGeo = new THREE.CircleGeometry(0.06, 12);
+        const leftBlush = new THREE.Mesh(blushGeo, cheekMat);
+        leftBlush.position.set(-0.24, 0.3, 0.3);
+        leftBlush.rotation.y = -0.3;
+        headGroup.add(leftBlush);
+        const rightBlush = new THREE.Mesh(blushGeo, cheekMat);
+        rightBlush.position.set(0.24, 0.3, 0.3);
+        rightBlush.rotation.y = 0.3;
+        headGroup.add(rightBlush);
+        
+        const eyeGeo = new THREE.SphereGeometry(0.045, 12, 12);
+        const leftEye = new THREE.Mesh(eyeGeo, darkMat);
+        leftEye.position.set(-0.12, 0.38, 0.33);
+        headGroup.add(leftEye);
+        const rightEye = new THREE.Mesh(eyeGeo, darkMat);
+        rightEye.position.set(0.12, 0.38, 0.33);
+        headGroup.add(rightEye);
+        
+        const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 8, 12, Math.PI), new THREE.MeshStandardMaterial({ color: 0x8B3A3A, roughness: 0.5 }));
+        mouth.position.set(0, 0.24, 0.36);
+        mouth.rotation.x = Math.PI;
+        headGroup.add(mouth);
+        
+        const hairBack = new THREE.Mesh(new THREE.SphereGeometry(0.42, 24, 24, 0, Math.PI * 2, 0, Math.PI * 0.6), hairMat);
+        hairBack.position.y = 0.4;
+        hairBack.castShadow = true;
+        headGroup.add(hairBack);
+        const hairFront = new THREE.Mesh(new THREE.SphereGeometry(0.42, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.25), hairMat);
+        hairFront.position.set(0.05, 0.45, 0.05);
+        hairFront.rotation.y = 0.2;
+        hairFront.scale.set(1, 0.6, 1);
+        headGroup.add(hairFront);
+        
+        const earGeo = new THREE.SphereGeometry(0.07, 8, 8);
+        earGeo.scale(0.5, 1, 0.8);
+        const leftEar = new THREE.Mesh(earGeo, skinMat);
+        leftEar.position.set(-0.4, 0.35, 0);
+        headGroup.add(leftEar);
+        const rightEar = new THREE.Mesh(earGeo, skinMat);
+        rightEar.position.set(0.4, 0.35, 0);
+        headGroup.add(rightEar);
+        
+        const armGeo = new THREE.CapsuleGeometry(0.08, 0.2, 4, 8);
+        const handGeo = new THREE.SphereGeometry(0.09, 10, 10);
+        const leftShoulder = new THREE.Group();
+        leftShoulder.position.set(-0.4, 1.0, 0);
+        const leftUpperArm = new THREE.Mesh(armGeo, bodyMat);
+        leftUpperArm.position.y = -0.15;
+        leftUpperArm.castShadow = true;
+        leftShoulder.add(leftUpperArm);
+        const leftElbow = new THREE.Group();
+        leftElbow.position.y = -0.3;
+        leftShoulder.add(leftElbow);
+        const leftForearm = new THREE.Mesh(armGeo, skinMat);
+        leftForearm.position.y = -0.15;
+        leftForearm.castShadow = true;
+        leftElbow.add(leftForearm);
+        const leftHand = new THREE.Mesh(handGeo, skinMat);
+        leftHand.position.y = -0.3;
+        leftElbow.add(leftHand);
+        group.add(leftShoulder);
+        
+        const rightShoulder = new THREE.Group();
+        rightShoulder.position.set(0.4, 1.0, 0);
+        const rightUpperArm = new THREE.Mesh(armGeo, bodyMat);
+        rightUpperArm.position.y = -0.15;
+        rightUpperArm.castShadow = true;
+        rightShoulder.add(rightUpperArm);
+        const rightElbow = new THREE.Group();
+        rightElbow.position.y = -0.3;
+        rightShoulder.add(rightElbow);
+        const rightForearm = new THREE.Mesh(armGeo, skinMat);
+        rightForearm.position.y = -0.15;
+        rightForearm.castShadow = true;
+        rightElbow.add(rightForearm);
+        const rightHand = new THREE.Mesh(handGeo, skinMat);
+        rightHand.position.y = -0.3;
+        rightElbow.add(rightHand);
+        group.add(rightShoulder);
+        
+        const legGeo = new THREE.CapsuleGeometry(0.1, 0.2, 4, 8);
+        const footGeo = new THREE.SphereGeometry(0.1, 10, 10);
+        footGeo.scale(1, 0.6, 1.4);
+        const shoeMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.4 });
+        
+        const leftHip = new THREE.Group();
+        leftHip.position.set(-0.18, 0.55, 0);
+        const leftThigh = new THREE.Mesh(legGeo, bodyMat);
+        leftThigh.position.y = -0.15;
+        leftThigh.castShadow = true;
+        leftHip.add(leftThigh);
+        const leftKnee = new THREE.Group();
+        leftKnee.position.y = -0.3;
+        leftHip.add(leftKnee);
+        const leftShin = new THREE.Mesh(legGeo, skinMat);
+        leftShin.position.y = -0.15;
+        leftShin.castShadow = true;
+        leftKnee.add(leftShin);
+        const leftFoot = new THREE.Mesh(footGeo, shoeMat);
+        leftFoot.position.set(0, -0.3, 0.05);
+        leftFoot.castShadow = true;
+        leftKnee.add(leftFoot);
+        group.add(leftHip);
+        
+        const rightHip = new THREE.Group();
+        rightHip.position.set(0.18, 0.55, 0);
+        const rightThigh = new THREE.Mesh(legGeo, bodyMat);
+        rightThigh.position.y = -0.15;
+        rightThigh.castShadow = true;
+        rightHip.add(rightThigh);
+        const rightKnee = new THREE.Group();
+        rightKnee.position.y = -0.3;
+        rightHip.add(rightKnee);
+        const rightShin = new THREE.Mesh(legGeo, skinMat);
+        rightShin.position.y = -0.15;
+        rightShin.castShadow = true;
+        rightKnee.add(rightShin);
+        const rightFoot = new THREE.Mesh(footGeo, shoeMat);
+        rightFoot.position.set(0, -0.3, 0.05);
+        rightFoot.castShadow = true;
+        rightKnee.add(rightFoot);
+        group.add(rightHip);
+        
+        const nameTag = this.createNameTag(this.name, this.isHuman);
+        nameTag.position.y = 2.1;
+        group.add(nameTag);
+        this.nameTag = nameTag;
+        
+        this.parts = { torso, headGroup, head, hairBack, hairFront, mouth, leftEye, rightEye, leftCheek, rightCheek, leftBlush, rightBlush, leftEar, rightEar, leftShoulder, rightShoulder, leftElbow, rightElbow, leftHip, rightHip, leftKnee, rightKnee };
+        return group;
+      }
+      
+      createNameTag(name, isHuman) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 256;
+        canvas.height = 64;
+        const ctx = canvas.getContext('2d');
+        const truncated = name.substring(0, CONFIG.player.maxNameLength);
+        ctx.fillStyle = isHuman ? 'rgba(255, 140, 1, 0.92)' : 'rgba(255, 140, 66, 0.95)';
+        ctx.beginPath();
+        ctx.roundRect(8, 16, 240, 32, 16);
+        ctx.fill();
+        ctx.strokeStyle = isHuman ? '#fff4e6' : 'rgba(255, 244, 230, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#000';
+        const fontSize = truncated.length > 8 ? 21 : 28;
+        ctx.font = `700 ${fontSize}px Outfit, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(truncated.toUpperCase(), 128, 33);
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.minFilter = THREE.LinearFilter;
+        const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false });
+        const sp = new THREE.Sprite(mat);
+        sp.scale.set(1.0, 0.35, 1);
+        sp.renderOrder = 999;
+        return sp;
+      }
+      
+      setState(state) {
+        if (this.state !== state) {
+          this.state = state;
+          this.stateTime = 0;
+        }
+      }
+      
+      startSitTransition(chair) {
+        this.sitTransition.active = true;
+        this.sitTransition.progress = 0;
+        this.sitTransition.startPos.copy(this.mesh.position);
+        this.sitTransition.targetPos.set(chair.position.x, 0, chair.position.z);
+        this.sitTransition.startRotY = this.mesh.rotation.y;
+        this.sitTransition.targetRotY = chair.mesh.rotation.y;
+        this.targetChair = chair;
+        this.setState('sitTransition');
+      }
+      
+      updateSitTransition(delta) {
+        if (!this.sitTransition.active) return;
+        this.sitTransition.progress += delta / this.sitTransition.duration;
+        const t = Math.min(this.sitTransition.progress, 1);
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        this.mesh.position.lerpVectors(this.sitTransition.startPos, this.sitTransition.targetPos, eased);
+        this.mesh.rotation.y = this.lerpAngle(this.sitTransition.startRotY, this.sitTransition.targetRotY, eased);
+        if (t >= 1) {
+          this.sitTransition.active = false;
+          this.mesh.position.copy(this.sitTransition.targetPos);
+          this.mesh.rotation.y = this.sitTransition.targetRotY;
+          this.setState('sitting');
+        }
+      }
+      
+      lerpAngle(a, b, t) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return a + d * t; }
+      
+      update(delta, time) {
+        this.animTime += delta;
+        this.stateTime += delta;
+        const p = this.parts;
+        
+        p.torso.position.y = 0.8;
+        p.headGroup.position.y = 1.2;
+        this.mesh.position.y = 0.07;
+        p.leftShoulder.position.set(-0.4, 1.0, 0);
+        p.rightShoulder.position.set(0.4, 1.0, 0);
+        p.leftHip.position.set(-0.18, 0.55, 0);
+        p.rightHip.position.set(0.18, 0.55, 0);
+        
+        p.leftElbow.position.y = -0.3;
+        p.rightElbow.position.y = -0.3;
+        
+        p.leftKnee.position.y = -0.3;
+        p.rightKnee.position.y = -0.3;
+        
+        if (this.state === 'sitTransition') {
+          this.updateSitTransition(delta);
+          const t = this.sitTransition.progress;
+          const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          
+          p.torso.position.y = 0.8 + (0.5 - 0.8) * eased;
+          p.headGroup.position.y = 1.2 + (0.9 - 1.2) * eased;
+          p.leftHip.position.y = 0.55 + (0.3 - 0.55) * eased;
+          p.rightHip.position.y = 0.55 + (0.3 - 0.55) * eased;
+          p.leftHip.position.z = 0 + (-0.1 - 0) * eased;
+          p.rightHip.position.z = 0 + (-0.1 - 0) * eased;
+          
+          p.leftHip.rotation.x = 0 + (-Math.PI / 2 - 0) * eased;
+          p.rightHip.rotation.x = 0 + (-Math.PI / 2 - 0) * eased;
+          p.leftKnee.rotation.x = 0 + (Math.PI / 2 - 0) * eased;
+          p.rightKnee.rotation.x = 0 + (Math.PI / 2 - 0) * eased;
+          
+          p.leftShoulder.rotation.x = 0 + (-Math.PI / 4 - 0) * eased;
+          p.rightShoulder.rotation.x = 0 + (-Math.PI / 4 - 0) * eased;
+          p.leftShoulder.rotation.z = 0.1 + (0.1 - 0.1) * eased;
+          p.rightShoulder.rotation.z = -0.1 + (-0.1 - (-0.1)) * eased;
+          p.leftElbow.rotation.x = 0.2 + (-Math.PI / 4 - 0.2) * eased;
+          p.rightElbow.rotation.x = 0.2 + (-Math.PI / 4 - 0.2) * eased;
+          
+          p.torso.rotation.x = 0 + (0.05 - 0) * eased;
+          p.headGroup.rotation.x = 0 + (0.05 - 0) * eased;
+          
+          return;
+        }
+        
+        const cr = this.mesh.rotation.y;
+        let td = cr - this.prevRotY;
+        while (td > Math.PI) td -= Math.PI * 2;
+        while (td < -Math.PI) td += Math.PI * 2;
+        this.turnVelocity = td / Math.max(delta, 0.001);
+        this.prevRotY = cr;
+        
+        switch (this.state) {
+          case 'idle': {
+            const b = Math.sin(this.animTime * 2) * 0.02;
+            p.torso.position.y = 0.8 + b;
+            p.headGroup.position.y = 1.2 + b;
+            p.leftShoulder.rotation.x = Math.sin(this.animTime * 1.5) * 0.05;
+            p.rightShoulder.rotation.x = -Math.sin(this.animTime * 1.5) * 0.05;
+            p.leftShoulder.rotation.z = 0.1;
+            p.rightShoulder.rotation.z = -0.1;
+            p.leftHip.rotation.x = 0;
+            p.rightHip.rotation.x = 0;
+            p.leftKnee.rotation.x = 0;
+            p.rightKnee.rotation.x = 0;
+            p.leftElbow.rotation.x = 0.2;
+            p.rightElbow.rotation.x = 0.2;
+            p.headGroup.rotation.y = Math.sin(this.animTime * 0.7) * 0.1;
+            break;
+          }
+          case 'walking': {
+            const f = 6,
+              a = 0.6,
+              t = this.animTime * f;
+            p.leftHip.rotation.x = Math.sin(t) * a;
+            p.rightHip.rotation.x = -Math.sin(t) * a;
+            p.leftKnee.rotation.x = Math.max(0, -Math.sin(t)) * 0.8;
+            p.rightKnee.rotation.x = Math.max(0, Math.sin(t)) * 0.8;
+            p.leftShoulder.rotation.x = -Math.sin(t) * a * 0.7;
+            p.rightShoulder.rotation.x = Math.sin(t) * a * 0.7;
+            p.leftShoulder.rotation.z = 0.05;
+            p.rightShoulder.rotation.z = -0.05;
+            p.leftElbow.rotation.x = 0.3 + Math.sin(t) * 0.1;
+            p.rightElbow.rotation.x = 0.3 - Math.sin(t) * 0.1;
+            const bob = Math.abs(Math.sin(t)) * 0.04;
+            p.torso.position.y = 0.8 + bob;
+            p.headGroup.position.y = 1.2 + bob;
+            p.torso.rotation.z = Math.max(-0.15, Math.min(0.15, -this.turnVelocity * 0.05));
+            break;
+          }
+          case 'running': {
+            const f = 10,
+              a = 1.1,
+              t = this.animTime * f;
+            p.leftHip.rotation.x = Math.sin(t) * a;
+            p.rightHip.rotation.x = -Math.sin(t) * a;
+            p.leftKnee.rotation.x = Math.max(0, -Math.sin(t)) * 1.5;
+            p.rightKnee.rotation.x = Math.max(0, Math.sin(t)) * 1.5;
+            p.leftShoulder.rotation.x = -Math.sin(t) * a * 0.9;
+            p.rightShoulder.rotation.x = Math.sin(t) * a * 0.9;
+            p.leftShoulder.rotation.z = 0.1;
+            p.rightShoulder.rotation.z = -0.1;
+            p.leftElbow.rotation.x = 0.8 + Math.sin(t) * 0.3;
+            p.rightElbow.rotation.x = 0.8 - Math.sin(t) * 0.3;
+            p.torso.rotation.x = 0.2;
+            p.headGroup.rotation.x = -0.1;
+            const bob = Math.abs(Math.sin(t)) * 0.06;
+            p.torso.position.y = 0.8 + bob;
+            p.headGroup.position.y = 1.2 + bob;
+            p.torso.rotation.z = Math.max(-0.25, Math.min(0.25, -this.turnVelocity * 0.04));
+            break;
+          }
+          case 'sitting': {
+            p.torso.position.y = 0.5;
+            p.headGroup.position.y = 0.9;
+            p.leftHip.position.set(-0.18, 0.3, -0.1);
+            p.rightHip.position.set(0.18, 0.3, -0.1);
+            
+            p.leftHip.rotation.x = -Math.PI / 2;
+            p.rightHip.rotation.x = -Math.PI / 2;
+            p.leftKnee.rotation.x = Math.PI / 2;
+            p.rightKnee.rotation.x = Math.PI / 2;
+            
+            p.leftShoulder.rotation.x = -Math.PI / 4;
+            p.rightShoulder.rotation.x = -Math.PI / 4;
+            p.leftElbow.rotation.x = -Math.PI / 4;
+            p.rightElbow.rotation.x = -Math.PI / 4;
+            p.leftShoulder.rotation.z = 0.1;
+            p.rightShoulder.rotation.z = -0.1;
+            
+            p.torso.rotation.x = 0.05;
+            p.headGroup.rotation.x = 0.05;
+            
+            const sw = Math.sin(this.animTime * 1.5) * 0.02;
+            p.torso.rotation.z = sw;
+            p.headGroup.rotation.z = sw;
+            break;
+          }
+          case 'celebrating': {
+            const j = Math.abs(Math.sin(this.animTime * 6)) * 0.5;
+            this.mesh.position.y = j;
+            p.leftShoulder.rotation.x = Math.PI - 0.3 + Math.sin(this.animTime * 8) * 0.3;
+            p.rightShoulder.rotation.x = Math.PI + 0.3 - Math.sin(this.animTime * 8) * 0.3;
+            p.leftShoulder.rotation.z = 0.2;
+            p.rightShoulder.rotation.z = -0.2;
+            p.leftElbow.rotation.x = 0.5;
+            p.rightElbow.rotation.x = 0.5;
+            p.leftHip.rotation.x = -0.2 + Math.sin(this.animTime * 6) * 0.2;
+            p.rightHip.rotation.x = -0.2 - Math.sin(this.animTime * 6) * 0.2;
+            p.torso.rotation.y = Math.sin(this.animTime * 4) * 0.2;
+            p.headGroup.rotation.y = Math.sin(this.animTime * 4) * 0.2;
+            p.mouth.scale.y = 1.3;
+            break;
+          }
+          case 'eliminated': {
+            p.torso.rotation.x = 0.3;
+            p.headGroup.rotation.x = 0.5;
+            p.headGroup.position.y = 1.1;
+            p.torso.position.y = 0.7;
+            p.leftShoulder.rotation.z = 0.4;
+            p.rightShoulder.rotation.z = -0.4;
+            p.leftShoulder.rotation.x = 0.3;
+            p.rightShoulder.rotation.x = 0.3;
+            p.leftElbow.rotation.x = 0.5;
+            p.rightElbow.rotation.x = 0.5;
+            const t = this.animTime * 2;
+            p.leftHip.rotation.x = Math.sin(t) * 0.2;
+            p.rightHip.rotation.x = -Math.sin(t) * 0.2;
+            break;
+          }
+        }
+        
+        if (this.state !== 'running' && this.state !== 'celebrating' && this.state !== 'sitTransition' && this.state !== 'sitting') {
+          p.torso.rotation.x = this.state === 'eliminated' ? 0.3 : 0;
+          p.headGroup.rotation.x = this.state === 'eliminated' ? 0.5 : 0;
+        }
+        if (this.state !== 'celebrating' && this.state !== 'sitTransition' && this.state !== 'sitting') {
+          p.torso.rotation.y = 0;
+          p.headGroup.rotation.y = this.state === 'idle' ? Math.sin(this.animTime * 0.7) * 0.1 : 0;
+          p.mouth.scale.y = 1;
+        }
+        if (this.state !== 'sitting' && this.state !== 'walking' && this.state !== 'running' && this.state !== 'sitTransition') {
+          p.torso.rotation.z = 0;
+          p.headGroup.rotation.z = 0;
+        }
+      }
+    }
+    class Chair {
+      constructor(position, index, seatColor = 0xC0392B) {
+        this.position = position.clone();
+        this.index = index;
+        this.occupied = false;
+        this.occupiedBy = null;
+        this.seatColor = seatColor;
+        this.mesh = this.createMesh();
+        this.mesh.position.copy(position);
+      }
+      createMesh() {
+        const g = new THREE.Group();
+        const sm = new THREE.MeshStandardMaterial({ color: this.seatColor, roughness: 0.6, metalness: 0.05 });
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.08, 0.75), sm);
+        seat.position.y = 0.5;
+        seat.castShadow = true;
+        g.add(seat);
+        const back = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.65, 0.08), sm);
+        back.position.set(0, 0.85, -0.33);
+        back.castShadow = true;
+        g.add(back);
+        const slatMat = new THREE.MeshStandardMaterial({ color: 0x6B4226, roughness: 0.8 });
+        for (let i = -1; i <= 1; i++) {
+          const s = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.6, 0.04), slatMat);
+          s.position.set(i * 0.24, 0.85, -0.3);
+          g.add(s);
+        }
+        const legMat = new THREE.MeshStandardMaterial({ color: 0x6B4226, roughness: 0.8 });
+        [
+          [-0.3, 0.25, -0.3],
+          [0.3, 0.25, -0.3],
+          [-0.3, 0.25, 0.3],
+          [0.3, 0.25, 0.3]
+        ].forEach(p => {
+          const l = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.5, 8), legMat);
+          l.position.set(...p);
+          g.add(l);
+        });
+        const cushion = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.1, 0.65), new THREE.MeshStandardMaterial({ color: this.seatColor, roughness: 0.8 }));
+        cushion.position.y = 0.59;
+        g.add(cushion);
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.75, 24), new THREE.MeshBasicMaterial({ color: 0xFFD23F, transparent: true, opacity: 0, side: THREE.DoubleSide }));
+        ring.position.y = 0.02;
+        ring.rotation.x = -Math.PI / 2;
+        g.add(ring);
+        this.highlightRing = ring;
+        return g;
+      }
+      setHighlight(v) { this.highlightRing.material.opacity = v ? 0.5 + Math.sin(performance.now() * 0.005) * 0.2 : 0; }
+      setOccupied(p) {
+        this.occupied = true;
+        this.occupiedBy = p;
+      }
+    }
+    
+    class MusicalChairsGame {
+      constructor() {
+        this.state = 'MENU';
+        this.previousState = null;
+        this.round = 0;
+        this.players = [];
+        this.chairs = [];
+        this.humanPlayer = null;
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.clock = new THREE.Clock();
+        this.cameraMode = 'follow';
+        this.cameraYawOffset = 0;
+        this.cameraPitchOffset = 0.25;
+        this.cameraZoom = 1.0;
+        this.cameraLookTarget = new THREE.Vector3();
+        this.input = { move: { x: 0, y: 0 }, keys: {}, joystickActive: false };
+        this.graphicsQuality = 'medium';
+        this.playerColorIndex = 1;
+        this.playerSkinIndex = 0;
+        this.joystickSensitivity = 0.5;
+        this.musicStartTime = 0;
+        this.musicDuration = 0;
+        this.rushStartTime = 0;
+        this.countdownValue = 3;
+        this.countdownTimer = 0;
+        this.audio = new AudioManager();
+        this.confettiSystem = null;
+        this.dustParticles = null;
+        this.trophyMesh = null;
+        this.clouds = [];
+        this.flags = [];
+        this.menuCharacter = null;
+        this.menuChairs = [];
+        this.chairColors = [0xC0392B, 0x2980B9, 0x27AE60, 0x8E44AD, 0xE67E22];
+        this.menuCameraPos = new THREE.Vector3(0, 4.5, 9);
+        this.menuCameraLook = new THREE.Vector3(0, 1, 0);
+        this.settings = { music: true, sfx: true };
+        
+        // 1 & 3. Persistent Data Init
+        this.playerCoins = parseInt(localStorage.getItem('playerCoins')) || 0;
+        this.aiPlayers = JSON.parse(localStorage.getItem('aiPlayers')) || [
+          { name: 'Alex', wins: 0 }, { name: 'Maya', wins: 0 }, { name: 'Kai', wins: 0 },
+          { name: 'Zara', wins: 0 }, { name: 'Leo', wins: 0 }, { name: 'Nova', wins: 0 },
+          { name: 'Max', wins: 0 }, { name: 'Luna', wins: 0 }, { name: 'Finn', wins: 0 }
+        ];
+        this.playerStats = JSON.parse(localStorage.getItem('playerStats')) || { name: 'Player', wins: 0 };
+        this.playerName = this.playerStats.name;
+        
+        this.init();
+      }
+      
+      init() {
+        this.setupRenderer();
+        this.setupScene();
+        this.setupLights();
+        this.setupArena();
+        this.setupEffects();
+        this.setupInput();
+        this.setupMenuScene();
+        this.setupUI();
+        document.getElementById('coinAmount').textContent = this.playerCoins;
+        window.addEventListener('resize', () => this.onResize());
+        this.animate();
+      }
+      
+      setupRenderer() {
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', alpha: false });
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.2;
+        document.getElementById('gameContainer').appendChild(this.renderer.domElement);
+      }
+      
+      setupScene() {
+        this.scene = new THREE.Scene();
+        const skyGeo = new THREE.SphereGeometry(100, 32, 16);
+        const skyMat = new THREE.ShaderMaterial({
+          uniforms: { topColor: { value: new THREE.Color(0x2E6FD6) }, midColor: { value: new THREE.Color(0x7AB8E8) }, bottomColor: { value: new THREE.Color(0xE1F5FE) } },
+          vertexShader: `varying vec3 vWorldPosition; void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vWorldPosition = wp.xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+          fragmentShader: `uniform vec3 topColor; uniform vec3 midColor; uniform vec3 bottomColor; varying vec3 vWorldPosition; void main() { float h = normalize(vWorldPosition).y; vec3 c; if (h > 0.0) { c = mix(midColor, topColor, smoothstep(0.0, 0.6, h)); } else { c = mix(midColor, bottomColor, smoothstep(0.0, -0.3, h)); } gl_FragColor = vec4(c, 1.0); }`,
+          side: THREE.BackSide,
+        });
+        this.scene.add(new THREE.Mesh(skyGeo, skyMat));
+        this.scene.fog = new THREE.Fog(0x7AB8E8, 50, 120);
+        this.createClouds();
+        this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 300);
+        this.camera.position.copy(this.menuCameraPos);
+        this.camera.lookAt(this.menuCameraLook);
+      }
+      
+      createClouds() {
+        const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1.0, metalness: 0, transparent: true, opacity: 0.9 });
+        for (let i = 0; i < 12; i++) {
+          const cloud = new THREE.Group();
+          const puffs = 3 + Math.floor(Math.random() * 3);
+          for (let j = 0; j < puffs; j++) {
+            const puff = new THREE.Mesh(new THREE.SphereGeometry(2 + Math.random() * 2, 8, 6), cloudMat);
+            puff.position.set((Math.random() - 0.5) * 4, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 4);
+            cloud.add(puff);
+          }
+          const angle = (i / 12) * Math.PI * 2;
+          const radius = 50 + Math.random() * 30;
+          cloud.position.set(Math.cos(angle) * radius, 25 + Math.random() * 15, Math.sin(angle) * radius);
+          cloud.scale.setScalar(0.8 + Math.random() * 0.6);
+          cloud.userData.speed = 0.02 + Math.random() * 0.03;
+          cloud.userData.angle = angle;
+          cloud.userData.radius = radius;
+          this.scene.add(cloud);
+          this.clouds.push(cloud);
+        }
+      }
+      
+      setupLights() {
+        this.scene.add(new THREE.AmbientLight(0xB0D0FF, 0.7));
+        this.scene.add(new THREE.HemisphereLight(0x7AB8E8, 0x6BA84F, 0.8));
+        this.sunLight = new THREE.DirectionalLight(0xFFF4E0, 2.2);
+        this.sunLight.position.set(-20, 30, 15);
+        this.sunLight.castShadow = true;
+        this.sunLight.shadow.mapSize.set(2048, 2048);
+        this.sunLight.shadow.camera.near = 0.5;
+        this.sunLight.shadow.camera.far = 80;
+        this.sunLight.shadow.camera.left = -35;
+        this.sunLight.shadow.camera.right = 35;
+        this.sunLight.shadow.camera.top = 35;
+        this.sunLight.shadow.camera.bottom = -35;
+        this.sunLight.shadow.bias = -0.00005;
+        this.scene.add(this.sunLight);
+        const fill = new THREE.DirectionalLight(0xB0D0FF, 0.5);
+        fill.position.set(20, 15, -15);
+        this.scene.add(fill);
+      }
+      
+      setupArena() {
+        const gGeo = new THREE.CircleGeometry(CONFIG.arena.groundRadius, 72);
+        const gMat = new THREE.MeshStandardMaterial({ color: 0x7AB85E, roughness: 0.95 });
+        const cols = [];
+        const pos = gGeo.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          const x = pos.getX(i),
+            y = pos.getY(i);
+          const n = (Math.sin(x * 0.4) + Math.cos(y * 0.4)) * 0.05;
+          const v = 0.85 + Math.random() * 0.3 + n;
+          cols.push(v * 0.42, v * 0.66, v * 0.31);
+        }
+        gGeo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+        gMat.vertexColors = true;
+        const ground = new THREE.Mesh(gGeo, gMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
+        
+        const og = new THREE.Mesh(new THREE.CircleGeometry(90, 32), new THREE.MeshStandardMaterial({ color: 0x4a8c3a, roughness: 1 }));
+
+
+        og.rotation.x = -Math.PI / 2;
+        og.position.y = -0.05;
+        og.receiveShadow = true;
+        this.scene.add(og);
+        
+        const pGeo = new THREE.RingGeometry(CONFIG.arena.trackInnerRadius, CONFIG.arena.trackOuterRadius, 72);
+        const pMat = new THREE.MeshStandardMaterial({ color: 0xB8896A, roughness: 0.95 });
+        const pc = [];
+        const pp = pGeo.attributes.position;
+        for (let i = 0; i < pp.count; i++) {
+          const v = 0.85 + Math.random() * 0.3;
+          pc.push(v * 0.72, v * 0.54, v * 0.41);
+        }
+        pGeo.setAttribute('color', new THREE.Float32BufferAttribute(pc, 3));
+        pMat.vertexColors = true;
+        const path = new THREE.Mesh(pGeo, pMat);
+        path.rotation.x = -Math.PI / 2;
+        path.position.y = 0.01;
+        path.receiveShadow = true;
+        this.scene.add(path);
+        
+        this.addDecoration();
+        this.addFlags();
+      }
+      
+      addDecoration() {
+        for (let i = 0; i < 22; i++) {
+          const a = (i / 22) * Math.PI * 2 + Math.random() * 0.2;
+          const r = CONFIG.arena.groundRadius - 1 - Math.random() * 2;
+          this.createTree(Math.cos(a) * r, Math.sin(a) * r, 0.8 + Math.random() * 0.5);
+        }
+        for (let i = 0; i < 14; i++) {
+          const a = Math.random() * Math.PI * 2;
+          const r = CONFIG.arena.groundRadius - 0.5 - Math.random() * 3;
+          this.createRock(Math.cos(a) * r, Math.sin(a) * r, 0.2 + Math.random() * 0.3);
+        }
+      }
+      createTree(x, z, s) {
+        const g = new THREE.Group();
+        const t = new THREE.Mesh(new THREE.CylinderGeometry(0.15 * s, 0.2 * s, 1.2 * s, 8), new THREE.MeshStandardMaterial({ color: 0x6B4226, roughness: 0.9 }));
+        t.position.y = 0.6 * s;
+        t.castShadow = true;
+        g.add(t);
+        const fm = new THREE.MeshStandardMaterial({ color: 0x3a8c2a, roughness: 0.85, flatShading: true });
+        for (let i = 0; i < 3; i++) {
+          const f = new THREE.Mesh(new THREE.IcosahedronGeometry(0.6 * s, 0), fm);
+          f.position.set((Math.random() - 0.5) * 0.4 * s, (1.4 + i * 0.4) * s, (Math.random() - 0.5) * 0.4 * s);
+          f.castShadow = true;
+          g.add(f);
+        }
+        g.position.set(x, 0, z);
+        g.rotation.y = Math.random() * Math.PI * 2;
+        this.scene.add(g);
+      }
+      
+      createRock(x, z, s) {
+        const r = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), new THREE.MeshStandardMaterial({ color: 0x8a8580, roughness: 0.95, flatShading: true }));
+        r.position.set(x, s * 0.4, z);
+        r.rotation.set(Math.random(), Math.random(), Math.random());
+        r.castShadow = true;
+        r.receiveShadow = true;
+        this.scene.add(r);
+      }
+      
+      addFlags() {
+        for (let i = 0; i < 10; i++) {
+          const a = (i / 10) * Math.PI * 2;
+          const r = CONFIG.arena.groundRadius - 2;
+          const x = Math.cos(a) * r,
+            z = Math.sin(a) * r;
+          const p = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3, 6), new THREE.MeshStandardMaterial({ color: 0xfff4e6 }));
+          p.position.set(x, 1.5, z);
+          this.scene.add(p);
+          const f = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.4), new THREE.MeshStandardMaterial({ color: 0xFFD23F, side: THREE.DoubleSide, roughness: 0.7 }));
+          f.position.set(x + 0.3, 2.7, z);
+          f.userData.angle = a;
+          this.scene.add(f);
+          this.flags.push(f);
+        }
+      }
+      
+      setupEffects() {
+        const dc = 200;
+        const dg = new THREE.BufferGeometry();
+        const dp = new Float32Array(dc * 3);
+        const dv = [];
+        for (let i = 0; i < dc; i++) {
+          dp[i * 3] = (Math.random() - 0.5) * 50;
+          dp[i * 3 + 1] = Math.random() * 12;
+          dp[i * 3 + 2] = (Math.random() - 0.5) * 50;
+          dv.push({ x: (Math.random() - 0.5) * 0.2, y: 0.1 + Math.random() * 0.2, z: (Math.random() - 0.5) * 0.2 });
+        }
+        dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+        this.dustParticles = new THREE.Points(dg, new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.06, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false }));
+        this.dustParticles.userData.velocities = dv;
+        this.scene.add(this.dustParticles);
+        this.setupConfetti();
+      }
+      
+      setupConfetti() {
+        const cc = 300;
+        const g = new THREE.BufferGeometry();
+        const p = new Float32Array(cc * 3);
+        const c = new Float32Array(cc * 3);
+        const v = [];
+        const cols = [
+          [1, 0.84, 0.25],
+          [1, 0.55, 0.26],
+          [1, 0.29, 0.43],
+          [0, 0.96, 0.83],
+          [0.61, 0.36, 0.9],
+          [0.3, 0.59, 1]
+        ];
+        for (let i = 0; i < cc; i++) {
+          p[i * 3] = 0;
+          p[i * 3 + 1] = -10;
+          p[i * 3 + 2] = 0;
+          const col = cols[Math.floor(Math.random() * cols.length)];
+          c[i * 3] = col[0];
+          c[i * 3 + 1] = col[1];
+          c[i * 3 + 2] = col[2];
+          v.push({ x: (Math.random() - 0.5) * 8, y: 8 + Math.random() * 6, z: (Math.random() - 0.5) * 8 });
+        }
+        g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+        g.setAttribute('color', new THREE.BufferAttribute(c, 3));
+        this.confettiSystem = new THREE.Points(g, new THREE.PointsMaterial({ size: 0.25, vertexColors: true, transparent: true, opacity: 1, depthWrite: false }));
+        this.confettiSystem.userData.velocities = v;
+        this.confettiSystem.userData.active = false;
+        this.confettiSystem.visible = false;
+        this.scene.add(this.confettiSystem);
+      }
+      
+      triggerConfetti(o) {
+        const p = this.confettiSystem.geometry.attributes.position;
+        const v = this.confettiSystem.userData.velocities;
+        for (let i = 0; i < p.count; i++) {
+          p.setXYZ(i, o.x, o.y + 1, o.z);
+          v[i].x = (Math.random() - 0.5) * 8;
+          v[i].y = 8 + Math.random() * 6;
+          v[i].z = (Math.random() - 0.5) * 8;
+        }
+        p.needsUpdate = true;
+        this.confettiSystem.userData.active = true;
+        this.confettiSystem.userData.startTime = performance.now();
+        this.confettiSystem.visible = true;
+        this.confettiSystem.material.opacity = 1;
+      }
+      
+      setupMenuScene() {
+        this.clearGameObjects();
+        this.menuCharacter = new Character(PLAYER_COLORS[this.playerColorIndex], SKIN_COLORS[this.playerSkinIndex], this.playerName, true);
+        this.menuCharacter.mesh.position.set(0, 0, 0);
+        this.scene.add(this.menuCharacter.mesh);
+        this.menuChairs = [];
+        for (let i = 0; i < 6; i++) {
+          const chair = new Chair(new THREE.Vector3(0, 0, 0), i, 0xE53935);
+          const angle = (i / 6) * Math.PI * 2;
+          chair.mesh.position.set(Math.cos(angle) * 3.5, 0, Math.sin(angle) * 3.5);
+          chair.mesh.rotation.y = -angle + Math.PI / 2;
+          this.scene.add(chair.mesh);
+          this.menuChairs.push(chair);
+        }
+      }
+      
+      clearGameObjects() {
+        if (this.menuCharacter) {
+          this.scene.remove(this.menuCharacter.mesh);
+          this.menuCharacter = null;
+        }
+        this.menuChairs.forEach(c => this.scene.remove(c.mesh));
+        this.menuChairs = [];
+        this.players.forEach(p => this.scene.remove(p.mesh));
+        this.players = [];
+        this.chairs.forEach(c => this.scene.remove(c.mesh));
+        this.chairs = [];
+        this.humanPlayer = null;
+      }
+      startGame() {
+        this.audio.init();
+        this.audio.resume();
+        document.getElementById('menuUI').classList.add('hidden');
+        document.getElementById('hud').classList.remove('hidden');
+        this.clearGameObjects();
+        this.createPlayers();
+        this.round = 0;
+        this.startRound();
+      }
+      
+      createPlayers() {
+        let ci = 0;
+        this.humanPlayer = new Character(PLAYER_COLORS[this.playerColorIndex], SKIN_COLORS[this.playerSkinIndex], this.playerStats.name, true);
+        this.scene.add(this.humanPlayer.mesh);
+        this.players.push(this.humanPlayer);
+        for (let i = 0; i < 9; i++) {
+          while (ci === this.playerColorIndex) ci++;
+          const ai = new Character(PLAYER_COLORS[ci], SKIN_COLORS[i % SKIN_COLORS.length], this.aiPlayers[i].name, false);
+          this.scene.add(ai.mesh);
+          this.players.push(ai);
+          ci++;
+        }
+        this.positionPlayersOnPath();
+      }
+      
+      positionPlayersOnPath() {
+        const ap = this.players.filter(p => !p.eliminated && !p.removed);
+        ap.forEach((p, i) => {
+          const a = (i / ap.length) * Math.PI * 2;
+          p.mesh.position.set(Math.cos(a) * CONFIG.arena.pathRadius, 0, Math.sin(a) * CONFIG.arena.pathRadius);
+          p.mesh.rotation.y = Math.atan2(-p.mesh.position.x, -p.mesh.position.z);
+        });
+      }
+      
+      startRound() {
+        const rc = CONFIG.game.rounds[this.round];
+        this.setupChairs(rc.chairs);
+        const ap = this.players.filter(p => !p.eliminated && !p.removed);
+        ap.forEach(p => {
+          p.sitting = false;
+          p.targetChair = null;
+          if (p.isHuman) {
+            p.rushDelay = 0;
+          } else {
+            p.rushDelay = p.ai.reaction + Math.random() * 0.15;
+          }
+          p.setState('idle');
+        });
+        this.positionPlayersOnPath();
+        document.getElementById('hudRound').textContent = (this.round + 1) + '/' + CONFIG.game.rounds.length;
+        document.getElementById('hudPlayers').textContent = ap.length;
+        document.getElementById('hudChairs').textContent = rc.chairs;
+        this.startCountdown();
+      }
+      
+      getChairCircleRadius(chairCount) {
+        if (chairCount === 1) return 0;
+        const maxR = CONFIG.arena.maxChairCircleRadius;
+        const minR = 1.5;
+        const t = this.round / (CONFIG.game.rounds.length - 2);
+        return maxR - (maxR - minR) * t;
+      }
+      
+      setupChairs(count) {
+        this.chairs.forEach(c => this.scene.remove(c.mesh));
+        this.chairs = [];
+        const sc = this.chairColors[this.round % this.chairColors.length];
+        const radius = this.getChairCircleRadius(count);
+        for (let i = 0; i < count; i++) {
+          const a = (i / count) * Math.PI * 2;
+          const x = Math.cos(a) * radius,
+            z = Math.sin(a) * radius;
+          const c = new Chair(new THREE.Vector3(x, 0, z), i, sc);
+          c.mesh.rotation.y = -a + Math.PI / 2;
+          this.scene.add(c.mesh);
+          this.chairs.push(c);
+        }
+      }
+      
+      startCountdown() {
+        this.state = 'COUNTDOWN';
+        this.countdownValue = 3;
+        this.countdownTimer = 0;
+        document.getElementById('countdownOverlay').classList.remove('hidden');
+        document.getElementById('roundBanner').classList.remove('hidden');
+        document.getElementById('roundBannerNum').textContent = this.round + 1;
+        const el = document.getElementById('countdownNum');
+        el.textContent = '3';
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = 'countdownPop 1s ease-out';
+        this.audio.playCountdown(false);
+      }
+      
+      startMusic() {
+        this.state = 'MUSIC';
+        document.getElementById('countdownOverlay').classList.add('hidden');
+        document.getElementById('roundBanner').classList.add('hidden');
+        this.musicDuration = 5 + Math.random() * 10;
+        this.musicStartTime = performance.now() / 1000;
+        const ms = document.getElementById('musicStatus');
+        ms.classList.remove('stopped');
+        ms.classList.add('playing');
+        document.getElementById('musicLabel').textContent = 'Music Playing';
+        this.audio.startMusic();
+      }
+      
+      startRush() {
+        this.state = 'RUSH';
+        this.rushStartTime = performance.now() / 1000;
+        const ms = document.getElementById('musicStatus');
+        ms.classList.remove('playing');
+        ms.classList.add('stopped');
+        document.getElementById('musicLabel').textContent = 'Music Stop';
+        this.audio.stopMusic();
+        this.audio.playWhoosh();
+      }
+      
+      sitPlayer() {
+        if (!this.humanPlayer || this.humanPlayer.eliminated || this.humanPlayer.sitting) return;
+        if (this.state !== 'RUSH') return;
+        if (this.humanPlayer.state === 'sitTransition' || this.humanPlayer.state === 'sitting') return;
+        let nc = null,
+          nd = Infinity;
+        for (const c of this.chairs) {
+          if (c.occupied) continue;
+          const d = c.position.distanceTo(this.humanPlayer.mesh.position);
+          if (d < nd) {
+            nd = d;
+            nc = c;
+          }
+        }
+        if (nc && nd < CONFIG.player.sitRange) {
+          nc.setOccupied(this.humanPlayer);
+          this.humanPlayer.sitting = true;
+          this.humanPlayer.sitOnChair = nc;
+          this.humanPlayer.startSitTransition(nc);
+          this.audio.playSit();
+          this.checkRoundEnd();
+        }
+      }
+      
+      checkRoundEnd() { if (this.chairs.filter(c => c.occupied).length >= this.chairs.length) this.endRound(); }
+      
+      // 1. UPDATE LEADERBOARD ON GAME END
+      endRound() {
+        this.state = 'ROUND_END';
+        const ss = this.players.filter(p => !p.eliminated && !p.sitting && !p.removed);
+        ss.forEach(p => {
+          p.eliminated = true;
+          p.setState('eliminated');
+        });
+        if (ss.length > 0) this.audio.playElimination();
+        setTimeout(() => this.removeEliminatedPlayers(), 1500);
+        
+        const rem = this.players.filter(p => !p.eliminated && !p.removed);
+        
+        if (this.humanPlayer.eliminated) {
+          // If human is eliminated and only 1 AI remains, that AI won
+          if (rem.length === 1 && !rem[0].isHuman) {
+            const aiWinner = this.aiPlayers.find(a => a.name === rem[0].name);
+            if (aiWinner) {
+              aiWinner.wins++;
+              localStorage.setItem('aiPlayers', JSON.stringify(this.aiPlayers));
+            }
+          }
+          setTimeout(() => {
+            document.getElementById('gameOverMsg').textContent = `You survived ${this.round} round${this.round > 1 ? 's' : ''}.`;
+            this.openModal('gameOverModal');
+            this.audio.playGameOver();
+          }, 2000);
+          return;
+        }
+        
+        if (rem.length === 1 && rem[0].isHuman) {
+          this.playerStats.wins++;
+          localStorage.setItem('playerStats', JSON.stringify(this.playerStats));
+          setTimeout(() => {
+            this.humanPlayer.setState('celebrating');
+            this.triggerConfetti(this.humanPlayer.mesh.position);
+            document.getElementById('victoryMsg').textContent = `${this.humanPlayer.name} grabbed the final chair!`;
+            this.openModal('victoryModal');
+            this.audio.playVictory();
+          }, 1500);
+          return;
+        }
+        
+        setTimeout(() => {
+          this.round++;
+          if (this.round < CONFIG.game.rounds.length) {
+            document.getElementById('transRound').textContent = `Round ${this.round + 1}`;
+            document.getElementById('transEliminated').textContent = `${CONFIG.game.rounds[this.round - 1].players - CONFIG.game.rounds[this.round].players} Eliminated`;
+            document.getElementById('transInfo').textContent = `${CONFIG.game.rounds[this.round].players} players · ${CONFIG.game.rounds[this.round].chairs} chairs`;
+            document.getElementById('roundTransition').classList.remove('hidden');
+            setTimeout(() => {
+              document.getElementById('roundTransition').classList.add('hidden');
+              this.startRound();
+            }, 2000);
+          }
+        }, 2500);
+      }
+      
+      removeEliminatedPlayers() {
+        this.players.forEach(p => {
+          if (p.eliminated && !p.removed) {
+            p.removed = true;
+            const fs = performance.now(),
+              fd = 500;
+            const fo = () => {
+              const e = performance.now() - fs,
+                t = Math.min(e / fd, 1);
+              p.mesh.traverse(c => {
+                if (c.material) {
+                  if (Array.isArray(c.material)) c.material.forEach(m => {
+                    m.transparent = true;
+                    m.opacity = 1 - t;
+                  });
+                  else {
+                    c.material.transparent = true;
+                    c.material.opacity = 1 - t;
+                  }
+                }
+              });
+              if (p.nameTag) p.nameTag.material.opacity = (1 - t) * 0.9;
+              if (t < 1) requestAnimationFrame(fo);
+              else this.scene.remove(p.mesh);
+            };
+            fo();
+          }
+        });
+      }
+      
+      pauseGame() {
+        if (this.state === 'PAUSED' || this.state === 'MENU') return;
+        this.previousState = this.state;
+        this.state = 'PAUSED';
+        this.openModal('pauseModal');
+        document.getElementById('sitButton').classList.remove('visible', 'active');
+        document.getElementById('sitButton').classList.add('disabled');
+        document.getElementById('joystick').style.opacity = '0';
+        if (this.audio.musicPlaying) this.audio.stopMusic();
+      }
+      
+      resumeGame() {
+        this.closeModal('pauseModal');
+        document.getElementById('joystick').style.opacity = '1';
+        this.state = this.previousState;
+        if (this.state === 'MUSIC') {
+          this.audio.startMusic();
+          this.musicStartTime = performance.now() / 1000 - (performance.now() / 1000 - this.musicStartTime);
+        }
+      }
+      
+      quitToMenu() {
+        this.audio.stopMusic();
+        this.closeModal('pauseModal');
+        this.closeModal('gameOverModal');
+        this.closeModal('victoryModal');
+        document.getElementById('hud').classList.add('hidden');
+        document.getElementById('menuUI').classList.remove('hidden');
+        document.getElementById('sitButton').classList.remove('visible', 'active', 'disabled');
+        document.getElementById('joystick').style.display = 'none';
+        document.getElementById('countdownOverlay').classList.add('hidden');
+        document.getElementById('roundTransition').classList.add('hidden');
+        this.state = 'MENU';
+        this.setupMenuScene();
+      }
+      
+      setupInput() {
+        window.addEventListener('keydown', (e) => {
+          this.input.keys[e.key.toLowerCase()] = true;
+          if (e.key.toLowerCase() === 'e' && (this.state === 'RUSH' || this.state === 'MUSIC')) this.sitPlayer();
+          if (e.key === 'Escape') {
+            if (this.state === 'PAUSED') this.resumeGame();
+            else if (this.state !== 'MENU') this.pauseGame();
+          }
+        });
+        window.addEventListener('keyup', (e) => { this.input.keys[e.key.toLowerCase()] = false; });
+        
+        let mDown = false,
+          lmx = 0,
+          lmy = 0;
+        this.renderer.domElement.addEventListener('mousedown', (e) => {
+          if (e.target !== this.renderer.domElement) return;
+          mDown = true;
+          lmx = e.clientX;
+          lmy = e.clientY;
+        });
+        window.addEventListener('mouseup', () => mDown = false);
+        window.addEventListener('mousemove', (e) => {
+          if (!mDown) return;
+          const dx = e.clientX - lmx,
+            dy = e.clientY - lmy;
+          this.cameraYawOffset -= dx * 0.006;
+          this.cameraPitchOffset = Math.max(CONFIG.camera.minPitch, Math.min(CONFIG.camera.maxPitch, this.cameraPitchOffset + dy * 0.006));
+          lmx = e.clientX;
+          lmy = e.clientY;
+        });
+        this.renderer.domElement.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          this.cameraZoom = Math.max(0.5, Math.min(2.0, this.cameraZoom + e.deltaY * 0.001));
+        }, { passive: false });
+        
+        const js = document.getElementById('joystick'),
+          jsk = document.getElementById('joystickKnob');
+        let jid = null,
+          jc = { x: 0, y: 0 },
+          cid = null,
+          ltx = 0,
+          lty = 0,
+          p1id = null,
+          p2id = null,
+          psd = 0,
+          psz = 1;
+        const gtd = (t1, t2) => Math.sqrt((t1.clientX - t2.clientX) ** 2 + (t1.clientY - t2.clientY) ** 2);
+        const hts = (e) => {
+          if (e.target.closest('button, input, .modal-content, .nav-btn, .icon-btn-round, .start-btn, .plus-btn, .coin-display')) return;
+          for (const t of e.changedTouches) {
+            if (p1id !== null && p2id === null) {
+              p2id = t.identifier;
+              let t1 = null;
+              for (const x of e.touches) { if (x.identifier === p1id) { t1 = x; break; } }
+              if (t1) {
+                psd = gtd(t1, t);
+                psz = this.cameraZoom;
+              }
+              e.preventDefault();
+              continue;
+            }
+            if (t.clientX < window.innerWidth * 0.45 && jid === null && this.state !== 'MENU') {
+              e.preventDefault();
+              jid = t.identifier;
+              jc.x = t.clientX;
+              jc.y = t.clientY;
+              js.style.left = (t.clientX - 65) + 'px';
+              js.style.top = (t.clientY - 65) + 'px';
+              js.style.display = 'block';
+              jsk.style.transform = 'translate(-50%, -50%)';
+            }
+            else if (cid === null && p1id === null) {
+              e.preventDefault();
+              p1id = t.identifier;
+              cid = t.identifier;
+              ltx = t.clientX;
+              lty = t.clientY;
+            }
+          }
+        };
+        const htm = (e) => {
+          let np = false;
+          for (const t of e.changedTouches) {
+            if (t.identifier === jid) {
+              np = true;
+              const dx = t.clientX - jc.x,
+                dy = t.clientY - jc.y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              const md = 55;
+              const cd = Math.min(dist, md);
+              const a = Math.atan2(dy, dx);
+              jsk.style.transform = `translate(calc(-50% + ${Math.cos(a) * cd}px), calc(-50% + ${Math.sin(a) * cd}px))`;
+              this.input.move.x = (dx * (0.5 + this.joystickSensitivity)) / md;
+              this.input.move.y = (-dy * (0.5 + this.joystickSensitivity)) / md;
+              const m = Math.sqrt(this.input.move.x ** 2 + this.input.move.y ** 2);
+              if (m > 1) {
+                this.input.move.x /= m;
+                this.input.move.y /= m;
+              }
+              this.input.joystickActive = true;
+            } else if (t.identifier === p1id || t.identifier === p2id) {
+              np = true;
+              if (p1id !== null && p2id !== null) {
+                let t1 = null,
+                  t2 = null;
+                for (const x of e.touches) { if (x.identifier === p1id) t1 = x; if (x.identifier === p2id) t2 = x; }
+                if (t1 && t2) {
+                  const cd = gtd(t1, t2);
+                  const sc = cd / Math.max(psd, 1);
+                  this.cameraZoom = Math.max(0.5, Math.min(2.0, psz / sc));
+                }
+              }
+              else if (t.identifier === cid) {
+                const dx = t.clientX - ltx,
+                  dy = t.clientY - lty;
+                this.cameraYawOffset -= dx * 0.008;
+                this.cameraPitchOffset = Math.max(CONFIG.camera.minPitch, Math.min(CONFIG.camera.maxPitch, this.cameraPitchOffset + dy * 0.008));
+                ltx = t.clientX;
+                lty = t.clientY;
+              }
+            }
+          }
+          if (np) e.preventDefault();
+        };
+        const hte = (e) => {
+          for (const t of e.changedTouches) {
+            if (t.identifier === jid) {
+              jid = null;
+              this.input.move.x = 0;
+              this.input.move.y = 0;
+              this.input.joystickActive = false;
+              js.style.display = 'none';
+              jsk.style.transform = 'translate(-50%, -50%)';
+            }
+            if (t.identifier === p1id) {
+              p1id = null;
+              cid = null;
+              if (p2id !== null) {
+                p1id = p2id;
+                cid = p2id;
+                p2id = null;
+              }
+            }
+            if (t.identifier === p2id) p2id = null;
+            if (t.identifier === cid) {
+              cid = null;
+              p1id = null;
+            }
+          }
+        };
+        window.addEventListener('touchstart', hts, { passive: false });
+        window.addEventListener('touchmove', htm, { passive: false });
+        window.addEventListener('touchend', hte);
+        window.addEventListener('touchcancel', hte);
+        this.renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
+        document.getElementById('sitButton').addEventListener('click', () => this.sitPlayer());
+      }
+      
+      update(delta) {
+        const time = performance.now() / 1000;
+        if (this.state === 'MENU') {
+          if (this.menuCharacter) {
+            this.menuCharacter.mesh.rotation.y += delta * 0.5;
+            this.menuCharacter.mesh.position.y = Math.sin(time * 1.5) * 0.025;
+            this.menuCharacter.update(delta, time);
+          }
+        } else if (this.state === 'COUNTDOWN') {
+          this.countdownTimer += delta;
+          if (this.countdownTimer >= 1) {
+            this.countdownTimer = 0;
+            this.countdownValue--;
+            const el = document.getElementById('countdownNum');
+            if (this.countdownValue > 0) {
+              el.textContent = this.countdownValue;
+              el.style.animation = 'none';
+              el.offsetHeight;
+              el.style.animation = 'countdownPop 1s ease-out';
+              this.audio.playCountdown(false);
+            }
+            else {
+              el.textContent = 'GO!';
+              el.style.animation = 'none';
+              el.offsetHeight;
+              el.style.animation = 'countdownPop 1s ease-out';
+              this.audio.playCountdown(true);
+              setTimeout(() => this.startMusic(), 400);
+            }
+          }
+          this.players.forEach(p => {
+            if (!p.eliminated && !p.removed) p.setState('idle');
+            p.update(delta, time);
+          });
+        } else if (this.state === 'MUSIC') {
+          if (time - this.musicStartTime >= this.musicDuration) this.startRush();
+          else this.updateMusicPhase(delta);
+          this.players.forEach(p => { if (!p.eliminated && !p.removed) p.update(delta, time); });
+        } else if (this.state === 'RUSH') {
+          this.updateRushPhase(delta);
+          this.players.forEach(p => { if (!p.removed) p.update(delta, time); });
+          if (time - this.rushStartTime > 12) this.endRound();
+        } else if (this.state === 'ROUND_END') { this.players.forEach(p => p.update(delta, time)); }
+        
+        this.updateDust(delta);
+        this.updateConfetti(delta);
+        this.flags.forEach(f => { f.rotation.y = Math.sin(time * 3 + f.userData.angle) * 0.2; });
+        this.clouds.forEach(cloud => {
+          cloud.userData.angle += cloud.userData.speed * delta;
+          cloud.position.x = Math.cos(cloud.userData.angle) * cloud.userData.radius;
+          cloud.position.z = Math.sin(cloud.userData.angle) * cloud.userData.radius;
+        });
+        this.updateCamera(delta);
+        this.updateSitButton();
+        if (this.state === 'RUSH') this.chairs.forEach(c => c.setHighlight(!c.occupied));
+        else this.chairs.forEach(c => c.setHighlight(false));
+      }
+      
+      updateMusicPhase(delta) {
+        const ap = this.players.filter(p => !p.eliminated && !p.removed);
+        const t = performance.now() / 1000;
+        ap.forEach((p) => {
+          if (p.sitting) return;
+          if (p.isHuman) {
+            let hi = this.input.joystickActive;
+            if (this.input.keys['w'] || this.input.keys['s'] || this.input.keys['a'] || this.input.keys['d'] || this.input.keys['arrowup'] || this.input.keys['arrowdown'] || this.input.keys['arrowleft'] || this.input.keys['arrowright']) hi = true;
+            if (hi) {
+              this.updateHumanMovement(delta, true);
+              this.constrainToTrack(p);
+              p.mesh.rotation.y = Math.atan2(-p.mesh.position.x, -p.mesh.position.z);
+              p.setState('walking');
+              if (t - p.lastFootstepTime > 0.4) {
+                p.lastFootstepTime = t;
+                this.audio.playFootstep();
+              }
+              return;
+            }
+          }
+          const pos = p.mesh.position;
+          let a = Math.atan2(pos.z, pos.x);
+          const r = CONFIG.arena.pathRadius;
+          const sp = CONFIG.player.rotationSpeed + p.speedOffset;
+          a += delta * sp;
+          pos.x = Math.cos(a) * r;
+          pos.z = Math.sin(a) * r;
+          p.mesh.rotation.y = Math.atan2(-pos.x, -pos.z);
+          p.setState('walking');
+          if (t - p.lastFootstepTime > 0.4) { p.lastFootstepTime = t; if (p.isHuman) this.audio.playFootstep(); }
+        });
+      }
+      
+      constrainToTrack(p) {
+        const pos = p.mesh.position;
+        const d = Math.sqrt(pos.x * pos.x + pos.z * pos.z);
+        const i = CONFIG.arena.trackInnerRadius + 0.3,
+          o = CONFIG.arena.trackOuterRadius - 0.3;
+        if (d < i) {
+          const s = i / d;
+          pos.x *= s;
+          pos.z *= s;
+        } else if (d > o) {
+          const s = o / d;
+          pos.x *= s;
+          pos.z *= s;
+        }
+      }
+      
+      updateHumanMovement(delta, isMusicPhase) {
+        const p = this.humanPlayer;
+        if (p.eliminated || p.sitting || p.state === 'sitTransition') return;
+        let mx = 0,
+          mz = 0;
+        if (this.input.keys['w'] || this.input.keys['arrowup']) mz -= 1;
+        if (this.input.keys['s'] || this.input.keys['arrowdown']) mz += 1;
+        if (this.input.keys['a'] || this.input.keys['arrowleft']) mx -= 1;
+        if (this.input.keys['d'] || this.input.keys['arrowright']) mx += 1;
+        if (this.input.joystickActive) {
+          mx = this.input.move.x;
+          mz = -this.input.move.y;
+        }
+        const im = Math.sqrt(mx * mx + mz * mz);
+        if (im > 0.1) {
+          const cf = new THREE.Vector3();
+          this.camera.getWorldDirection(cf);
+          cf.y = 0;
+          cf.normalize();
+          const cr = new THREE.Vector3();
+          cr.crossVectors(cf, new THREE.Vector3(0, 1, 0)).normalize();
+          const md = new THREE.Vector3();
+          md.addScaledVector(cf, -mz);
+          md.addScaledVector(cr, mx);
+          md.normalize();
+          const sp = isMusicPhase ? CONFIG.player.walkSpeed : CONFIG.player.runSpeed;
+          p.mesh.position.addScaledVector(md, sp * delta);
+          if (!isMusicPhase) {
+            const dfc = Math.sqrt(p.mesh.position.x ** 2 + p.mesh.position.z ** 2);
+            const mr = CONFIG.arena.groundRadius - 1;
+            if (dfc > mr) {
+              p.mesh.position.x *= mr / dfc;
+              p.mesh.position.z *= mr / dfc;
+            }
+            const ta = Math.atan2(md.x, md.z);
+            p.mesh.rotation.y = this.lerpAngle(p.mesh.rotation.y, ta, 0.2);
+            p.setState('running');
+            if (performance.now() / 1000 - p.lastFootstepTime > 0.28) {
+              p.lastFootstepTime = performance.now() / 1000;
+              this.audio.playFootstep();
+            }
+          }
+        } else if (!isMusicPhase) p.setState('idle');
+      }
+      
+      updateRushPhase(delta) {
+        this.updateHumanMovement(delta, false);
+        const ap = this.players.filter(p => !p.isHuman && !p.eliminated && !p.sitting && !p.removed && p.state !== 'sitTransition');
+        ap.forEach(p => {
+          if (p.rushDelay > 0) {
+            p.rushDelay -= delta;
+            p.setState('idle');
+            return;
+          }
+          if (!p.targetChair || p.targetChair.occupied) { p.targetChair = this.findNearestEmptyChair(p.mesh.position, p); if (!p.targetChair) { p.setState('idle'); return; } }
+          const c = p.targetChair;
+          const tc = new THREE.Vector3().subVectors(c.position, p.mesh.position);
+          tc.y = 0;
+          const d = tc.length();
+          if (d < 0.8) {
+            c.setOccupied(p);
+            p.sitting = true;
+            p.sitOnChair = c;
+            p.startSitTransition(c);
+            this.audio.playSit();
+            this.checkRoundEnd();
+          }
+          else {
+            tc.normalize();
+            const av = this.computeAvoidance(p);
+            const ss = this.computeSideStepping(p, tc);
+            tc.add(av.multiplyScalar(0.8));
+            tc.add(ss.multiplyScalar(0.5));
+            tc.normalize();
+            p.mesh.position.addScaledVector(
+              tc,
+              CONFIG.player.runSpeed * p.ai.speed * delta
+            );
+            const dfc = Math.sqrt(p.mesh.position.x ** 2 + p.mesh.position.z ** 2);
+            const mr = CONFIG.arena.groundRadius - 1;
+            if (dfc > mr) {
+              p.mesh.position.x *= mr / dfc;
+              p.mesh.position.z *= mr / dfc;
+            }
+            const ta = Math.atan2(tc.x, tc.z);
+            p.mesh.rotation.y = this.lerpAngle(p.mesh.rotation.y, ta, 0.15);
+            p.setState('running');
+            if (performance.now() / 1000 - p.lastFootstepTime > 0.28) p.lastFootstepTime = performance.now() / 1000;
+          }
+        });
+      }
+      
+      findNearestEmptyChair(pos, req) {
+        let n = null,
+          nd = Infinity;
+        for (const c of this.chairs) {
+          if (c.occupied) continue;
+          let con = false;
+          for (const o of this.players) { if (o === req || o.eliminated || o.sitting || o.removed || o.isHuman) continue; if (o.targetChair === c) { const od = o.mesh.position.distanceTo(c.position); const md = pos.distanceTo(c.position); if (od < md - 0.5) { con = true; break; } } }
+          if (con) continue;
+          const d = pos.distanceTo(c.position);
+          if (d < nd) {
+            nd = d;
+            n = c;
+          }
+        }
+        if (!n)
+          for (const c of this.chairs) {
+            if (c.occupied) continue;
+            const d = pos.distanceTo(c.position);
+            if (d < nd) {
+              nd = d;
+              n = c;
+            }
+          }
+        return n;
+      }
+      
+      computeAvoidance(ch) {
+        const av = new THREE.Vector3();
+        const ps = ch.mesh.position;
+        for (const o of this.players) {
+          if (o === ch || o.eliminated || o.removed) continue;
+          const op = o.mesh.position;
+          const df = new THREE.Vector3().subVectors(ps, op);
+          df.y = 0;
+          const d = df.length();
+          if (d < CONFIG.player.minSeparation && d > 0.01) {
+            df.normalize().divideScalar(Math.max(d, 0.3));
+            av.add(df);
+          }
+        }
+        return av;
+      }
+      computeSideStepping(ch, md) {
+        const st = new THREE.Vector3();
+        const ps = ch.mesh.position;
+        const ah = new THREE.Vector3().copy(md).multiplyScalar(1.5).add(ps);
+        for (const o of this.players) {
+          if (o === ch || o.eliminated || o.removed) continue;
+          const op = o.mesh.position;
+          const df = new THREE.Vector3().subVectors(ah, op);
+          df.y = 0;
+          const d = df.length();
+          if (d < CONFIG.player.minSeparation + 0.3) {
+            const p = new THREE.Vector3(-md.z, 0, md.x).normalize();
+            const to = new THREE.Vector3().subVectors(op, ps).normalize();
+            const dt = to.dot(p);
+            const sn = dt > 0 ? -1 : 1;
+            st.addScaledVector(p, sn * (1 - d / (CONFIG.player.minSeparation + 0.3)));
+          }
+        }
+        return st;
+      }
+      lerpAngle(a, b, t) { let d = b - a; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return a + d * t; }
+      
+      updateSitButton() {
+        const sb = document.getElementById('sitButton');
+        const show = (this.state === 'MUSIC' || this.state === 'RUSH');
+        if (!show || !this.humanPlayer || this.humanPlayer.eliminated || this.humanPlayer.sitting) { sb.classList.remove('visible', 'active', 'disabled'); return; }
+        let nd = Infinity,
+          he = false;
+        for (const c of this.chairs) {
+          if (c.occupied) continue;
+          he = true;
+          const d = c.position.distanceTo(this.humanPlayer.mesh.position);
+          if (d < nd) nd = d;
+        }
+        sb.classList.add('visible');
+        if (he && nd < CONFIG.player.sitRange && this.state === 'RUSH') {
+          sb.classList.remove('disabled');
+          sb.classList.add('active');
+        }
+        else {
+          sb.classList.remove('active');
+          sb.classList.add('disabled');
+        }
+      }
+      
+      updateCamera(delta) {
+        if (this.state === 'MENU') {
+          const lf = 1 - Math.exp(-8 * delta);
+          this.camera.position.lerp(this.menuCameraPos, lf);
+          this.cameraLookTarget.lerp(this.menuCameraLook, lf);
+          this.camera.lookAt(this.cameraLookTarget);
+          return;
+        }
+        if (!this.humanPlayer) return;
+        const pp = this.humanPlayer.mesh.position;
+        const dc = Math.sqrt(pp.x ** 2 + pp.z ** 2);
+        const sd = Math.max(0.1, dc);
+        const rx = pp.x / sd,
+          rz = pp.z / sd;
+        const y = this.cameraYawOffset,
+          cy = Math.cos(y),
+          sy = Math.sin(y);
+        const rrx = rx * cy - rz * sy,
+          rrz = rx * sy + rz * cy;
+        let dx, dy, dz, lx, ly, lz;
+        if (this.cameraMode === 'top') {
+          dx = pp.x + rrx * 2;
+          dz = pp.z + rrz * 2;
+          dy = 15 * this.cameraZoom;
+        }
+        else if (this.cameraMode === 'side') {
+          dx = pp.x + rrx * 6 * this.cameraZoom;
+          dz = pp.z + rrz * 6 * this.cameraZoom;
+          dy = 3 * this.cameraZoom;
+        }
+        else {
+          const dist = CONFIG.camera.followDistance * this.cameraZoom;
+          const h = CONFIG.camera.followHeight * (0.8 + this.cameraPitchOffset * 0.5);
+          dx = pp.x + rrx * dist;
+          dz = pp.z + rrz * dist;
+          dy = h + this.cameraPitchOffset * 3;
+        }
+        lx = pp.x * (0.8 - this.cameraPitchOffset * 0.3);
+        lz = pp.z * (0.8 - this.cameraPitchOffset * 0.3);
+        ly = 1.2;
+        const lf = 1 - Math.exp(-12 * delta);
+        this.camera.position.x += (dx - this.camera.position.x) * lf;
+        this.camera.position.y += (dy - this.camera.position.y) * lf;
+        this.camera.position.z += (dz - this.camera.position.z) * lf;
+        if (this.camera.position.y < 1.5) this.camera.position.y = 1.5;
+        const lt = new THREE.Vector3(lx, ly, lz);
+        const llf = 1 - Math.exp(-15 * delta);
+        this.cameraLookTarget.lerp(lt, llf);
+        this.camera.lookAt(this.cameraLookTarget);
+      }
+      
+      updateDust(delta) {
+        const p = this.dustParticles.geometry.attributes.position;
+        const v = this.dustParticles.userData.velocities;
+        for (let i = 0; i < p.count; i++) {
+          let x = p.getX(i),
+            y = p.getY(i),
+            z = p.getZ(i);
+          x += v[i].x * delta;
+          y += v[i].y * delta;
+          z += v[i].z * delta;
+          if (y > 14) {
+            y = 0;
+            x = (Math.random() - 0.5) * 50;
+            z = (Math.random() - 0.5) * 50;
+          }
+          if (Math.abs(x) > 25) x = -x * 0.95;
+          if (Math.abs(z) > 25) z = -z * 0.95;
+          p.setXYZ(i, x, y, z);
+        }
+        p.needsUpdate = true;
+      }
+      updateConfetti(delta) {
+        if (!this.confettiSystem.userData.active) return;
+        const p = this.confettiSystem.geometry.attributes.position;
+        const v = this.confettiSystem.userData.velocities;
+        const st = this.confettiSystem.userData.startTime;
+        const e = (performance.now() - st) / 1000;
+        for (let i = 0; i < p.count; i++) {
+          let x = p.getX(i),
+            y = p.getY(i),
+            z = p.getZ(i);
+          v[i].y -= 9.8 * delta;
+          x += v[i].x * delta;
+          y += v[i].y * delta;
+          z += v[i].z * delta;
+          v[i].x *= 0.98;
+          v[i].z *= 0.98;
+          if (y < 0) {
+            v[i].y = 0;
+            y = 0;
+            v[i].x *= 0.5;
+            v[i].z *= 0.5;
+          }
+          p.setXYZ(i, x, y, z);
+        }
+        p.needsUpdate = true;
+        if (e > 8) { this.confettiSystem.material.opacity = Math.max(0, 1 - (e - 8) / 2); if (e > 10) this.confettiSystem.userData.active = false; }
+      }
+      
+
+
+      
+      animate() {
+        requestAnimationFrame(() => this.animate());
+        const d = Math.min(this.clock.getDelta(), 0.1);
+        if (this.state !== 'PAUSED') this.update(d);
+        // <<< ADD CLOUD / BUTTERFLY / GRASS ANIMATION>>>
+        
+        
+        this.renderer.render(this.scene, this.camera);
+      }
+      
+      onResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      
+      setupUI() {
+        this.updateColorGrids();
+        this.updatePreview();
+        this.updateSensitivity(document.getElementById('sensitivitySlider').value);
+      }
+      
+      openModal(id) {
+        if (id === 'dailyModal') this.checkDailyRewardStatus();
+        if (id === 'leaderboardModal') this.renderLeaderboard();
+        document.getElementById(id).classList.add('visible');
+      }
+      closeModal(id) { document.getElementById(id).classList.remove('visible'); }
+      
+      openProfile() {
+        document.getElementById('nameInput').value = this.playerName;
+        this.updateColorGrids();
+        this.updatePreview();
+        this.openModal('profileModal');
+      }
+      setCamera(mode, btn) {
+        this.cameraMode = mode;
+        document.querySelectorAll('[data-camera]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      setQuality(q, btn) {
+        this.graphicsQuality = q;
+        document.querySelectorAll('[data-quality]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (q === 'low') {
+          this.renderer.setPixelRatio(1);
+          this.sunLight.castShadow = false;
+        } else if (q === 'medium') {
+          this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+          this.sunLight.castShadow = true;
+          this.sunLight.shadow.mapSize.set(1024, 1024);
+        } else {
+          this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          this.sunLight.castShadow = true;
+          this.sunLight.shadow.mapSize.set(2048, 2048);
+        }
+      }
+      updateSensitivity(val) {
+        this.joystickSensitivity = val / 100;
+        document.getElementById('sensitivityValue').textContent = val + '%';
+        const slider = document.getElementById('sensitivitySlider');
+        slider.style.background = `linear-gradient(to right, var(--orange) 0%, var(--orange) ${val}%, rgba(255,255,255,0.1) ${val}%, rgba(255,255,255,0.1) 100%)`;
+      }
+      toggleSetting(toggleId, key) {
+        const t = document.getElementById(toggleId);
+        t.classList.toggle('on');
+        this.settings[key] = t.classList.contains('on');
+      }
+      
+      saveProfile() {
+        this.playerName = document.getElementById('nameInput').value || 'Player';
+        this.playerStats.name = this.playerName;
+        localStorage.setItem('playerStats', JSON.stringify(this.playerStats));
+        if (this.menuCharacter) {
+          this.scene.remove(this.menuCharacter.mesh);
+          this.menuCharacter = new Character(PLAYER_COLORS[this.playerColorIndex], SKIN_COLORS[this.playerSkinIndex], this.playerName, true);
+          this.menuCharacter.mesh.position.set(0, 0, 0);
+          this.scene.add(this.menuCharacter.mesh);
+        }
+        this.closeModal('profileModal');
+        this.showToast('Profile saved!');
+      }
+      
+      // 2. DAILY REWARD LOGIC
+      checkDailyRewardStatus() {
+        const today = new Date().toISOString().split('T')[0];
+        const lastClaim = localStorage.getItem('dailyRewardLastClaim');
+        const btn = document.getElementById('dailyClaimBtn');
+        
+        if (lastClaim === today) {
+          btn.disabled = true;
+          btn.textContent = 'Already Claimed Today';
+          btn.style.opacity = '0.5';
+          btn.style.pointerEvents = 'none';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'CLAIM';
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = 'auto';
+        }
+      }
+      
+      claimDaily() {
+        const today = new Date().toISOString().split('T')[0];
+        const lastClaim = localStorage.getItem('dailyRewardLastClaim');
+        if (lastClaim === today) return;
+        
+        this.playerCoins += 100;
+        localStorage.setItem('playerCoins', this.playerCoins);
+        localStorage.setItem('dailyRewardLastClaim', today);
+        document.getElementById('coinAmount').textContent = this.playerCoins;
+        this.checkDailyRewardStatus();
+        this.showToast('+100 Coins claimed!');
+      }
+      
+      // 1. RENDER LEADERBOARD
+      renderLeaderboard() {
+        const list = document.getElementById('leaderboardList');
+        list.innerHTML = '';
+        
+        const allPlayers = [
+          { name: this.playerStats.name, wins: this.playerStats.wins, isHuman: true },
+          ...this.aiPlayers
+        ];
+        
+        // Stable sort by wins (highest to lowest)
+        allPlayers.sort((a, b) => b.wins - a.wins);
+        
+        allPlayers.forEach((p, index) => {
+          const li = document.createElement('li');
+          li.className = 'leaderboard-item';
+          if (p.isHuman) li.style.background = 'rgba(255,140,66,0.15)';
+          li.innerHTML = `
+        <span class="leaderboard-rank">${index + 1}</span>
+        <span class="leaderboard-name">${p.name}</span>
+        <span class="leaderboard-score">${p.wins} W</span>
+      `;
+          list.appendChild(li);
+        });
+      }
+      
+      showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.opacity = '1';
+        setTimeout(() => { t.style.opacity = '0'; }, 2000);
+      }
+      updateColorGrids() {
+        const cg = document.getElementById('colorGrid');
+        cg.innerHTML = '';
+        PLAYER_COLORS.forEach((c, i) => {
+          const s = document.createElement('div');
+          s.className = 'color-swatch' + (i === this.playerColorIndex ? ' active' : '');
+          s.style.background = `linear-gradient(135deg, #${c.body.toString(16).padStart(6,'0')}, #${c.body.toString(16).padStart(6,'0')}dd)`;
+          s.onclick = () => {
+            this.playerColorIndex = i;
+            this.updateColorGrids();
+            this.updatePreview();
+          };
+          cg.appendChild(s);
+        });
+        const sg = document.getElementById('skinGrid');
+        sg.innerHTML = '';
+        SKIN_COLORS.forEach((sc, i) => {
+          const s = document.createElement('div');
+          s.className = 'color-swatch' + (i === this.playerSkinIndex ? ' active' : '');
+          s.style.background = `#${sc.toString(16).padStart(6,'0')}`;
+          s.onclick = () => {
+            this.playerSkinIndex = i;
+            this.updateColorGrids();
+            this.updatePreview();
+          };
+          sg.appendChild(s);
+        });
+      }
+      
+      updatePreview() {
+        const c = document.getElementById('preview-canvas');
+        const ctx = c.getContext('2d');
+        
+        ctx.clearRect(0, 0, 80, 80);
+        const cx = 40,
+          cy = 45;
+        const color = '#' + PLAYER_COLORS[this.playerColorIndex].body.toString(16).padStart(6, '0');
+        const skin = '#' + SKIN_COLORS[this.playerSkinIndex].toString(16).padStart(6, '0');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.roundRect(cx - 14, cy - 5, 28, 30, 10);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.roundRect(cx - 18, cy - 3, 8, 20, 4);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.roundRect(cx + 10, cy - 3, 8, 20, 4);
+        ctx.fill();
+        ctx.fillStyle = skin;
+        ctx.beginPath();
+        ctx.arc(cx - 14, cy + 18, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx + 14, cy + 18, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = skin;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 18, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#2A1810';
+        ctx.beginPath();
+        ctx.arc(cx, cy - 20, 14, Math.PI, 0);
+        ctx.fill();
+        ctx.fillStyle = '#1a1a1a';
+        ctx.beginPath();
+        ctx.arc(cx - 5, cy - 17, 2, 0, Math.PI * 2);
+        ctx.arc(cx + 5, cy - 17, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#8B3A3A';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy - 13, 4, 0.2, Math.PI - 0.2);
+        ctx.stroke();
+      }
+    }
+    
+    document.querySelectorAll('.modal-overlay').forEach(m => { m.addEventListener('click', e => { if (e.target === m) m.classList.remove('visible'); }); });
+    
+    const game = new MusicalChairsGame();
+    window.game = game;
+
+  </script>
+  
+</body>
+
+</html>
