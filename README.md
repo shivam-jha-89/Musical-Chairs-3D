@@ -2,7 +2,7 @@
 
 # Musical Chairs 3D
 
-> **Run. Listen. Rush. Sit. Become the Champion! 🪑🏆**  [`▶️ PLAY NOW`](https://rakeshid03.github.io/Musical-Chairs-3D/)
+> **Run. Listen. Rush. Sit. Become the Champion! 🪑🏆**  [`▶️ PLAY NOW`](https://shivam-jha-89.github.io/Musical-Chairs-3D/)
 
 Musical Chairs 3D is a fast-paced casual browser game. Players run around a circle while music plays, then race to grab a chair the moment the music stops. Outsmart AI opponents, unlock skins, earn coins, and become the ultimate champion.
 
